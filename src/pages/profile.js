@@ -1,24 +1,26 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
+import axios from "axios";
 
 export default function Profile() {
     // Données initiales de l'utilisateur
     const [user, setUser] = useState({
-        name: 'Antonin MMI',
+        name: 'pamarta',
         bio: 'Étudiant en MMI passionné par le développement et la création de projets.',
         interests: ['Web Development', 'Design', 'Photographie'],
         courses: ['HTML & CSS', 'JavaScript', 'UI/UX'],
         badges: ['MMI Master', 'Hackathon Winner'],
+        profileImageUrl: '',
     });
 
     // État pour suivre si l'utilisateur est en mode "édition"
     const [isEditing, setIsEditing] = useState(false);
 
     // État temporaire pour stocker les modifications pendant l'édition
-    const [formData, setFormData] = useState({ ...user });
+    const [formData, setFormData] = useState({...user});
 
     // Fonction pour mettre à jour le state local à chaque modification de champs
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData({
             ...formData,
             [name]: value,
@@ -32,12 +34,44 @@ export default function Profile() {
         setIsEditing(false); // Quitter le mode édition
     };
 
-    return (
+    const fetchMoodleUserData = async (username) => {
+        try {
+            const moodleResponse = await axios.get(`/moodle-api/webservice/rest/server.php`, {
+                params: {
+                    wstoken: 'ba545e95bb07afa2256e1dcaa47c07a5',
+                    moodlewsrestformat: 'json',
+                    wsfunction: 'core_enrol_get_enrolled_users',
+                    courseid: 412,
+                    'options[4][name]': 'userfields',
+                    'options[4][value]': 'profileimageurl',
+                },
+            });
+
+            const userData = moodleResponse.data.find((user) => user.fullname === username);
+
+            if (userData) {
+                setUser((prevUser) => ({
+                    ...prevUser,
+                    profileImageUrl: userData.profileimageurl,
+                }));
+                console.log("(profile.js:50) userData", userData);
+            } else {
+                console.error("Utilisateur non trouvé dans le cours Moodle");
+            }
+        } catch (error) {
+            console.error('Failed to fetch Moodle user data', error);
+        }
+    };
+    useEffect(() => {
+        fetchMoodleUserData("Pamart,Antonin").then(r => console.log);
+    }, []);
+
+            return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-100">
             {/* Profil Header */}
             <div className="bg-white rounded-xl shadow-xl p-8 flex items-center space-x-6">
                 <img
-                    src="/path-to-avatar.jpg" // Remplace avec le chemin réel de l'avatar de l'utilisateur
+                    src={user.profileImageUrl}// Remplace avec le chemin réel de l'avatar de l'utilisateur
                     alt="User Avatar"
                     className="w-24 h-24 rounded-full object-cover border-2 border-blue-500"
                 />
