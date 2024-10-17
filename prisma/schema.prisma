@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                                        Int             @id @default(autoincrement())
+  name                                      String
+  surname                                   String
+  email                                     String          @unique(map: "sqlite_autoindex_User_1")
+  password                                  String
+  date_of_birth                             String
+  gender                                    String?
+  sexual_orientation                        String?
+  profile_picture                           String?
+  bio                                       String?
+  location                                  String?
+  createdAt                                 DateTime?       @default(now())
+  updatedAt                                 DateTime?       @default(now())
+  BlockedUsers_BlockedUsers_blockerIdToUser BlockedUsers[]  @relation("BlockedUsers_blockerIdToUser")
+  BlockedUsers_BlockedUsers_blockedIdToUser BlockedUsers[]  @relation("BlockedUsers_blockedIdToUser")
+  Likes_Likes_fromUserIdToUser              Likes[]         @relation("Likes_fromUserIdToUser")
+  Likes_Likes_toUserIdToUser                Likes[]         @relation("Likes_toUserIdToUser")
+  Messages_Messages_fromUserIdToUser        Messages[]      @relation("Messages_fromUserIdToUser")
+  Messages_Messages_toUserIdToUser          Messages[]      @relation("Messages_toUserIdToUser")
+  Preferences                               Preferences[]
+  Reports_Reports_reporterIdToUser          Reports[]       @relation("Reports_reporterIdToUser")
+  Reports_Reports_reportedIdToUser          Reports[]       @relation("Reports_reportedIdToUser")
+  Subscriptions                             Subscriptions[]
+  Visits_Visits_visitorIdToUser             Visits[]        @relation("Visits_visitorIdToUser")
+  Visits_Visits_visitedIdToUser             Visits[]        @relation("Visits_visitedIdToUser")
+}
+
+model BlockedUsers {
+  id                                Int       @id @default(autoincrement())
+  blockerId                         Int?
+  blockedId                         Int?
+  createdAt                         DateTime? @default(now())
+  User_BlockedUsers_blockerIdToUser User?     @relation("BlockedUsers_blockerIdToUser", fields: [blockerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_BlockedUsers_blockedIdToUser User?     @relation("BlockedUsers_blockedIdToUser", fields: [blockedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Likes {
+  id                          Int       @id @default(autoincrement())
+  fromUserId                  Int?
+  toUserId                    Int?
+  status                      String?
+  createdAt                   DateTime? @default(now())
+  User_Likes_fromUserIdToUser User?     @relation("Likes_fromUserIdToUser", fields: [fromUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Likes_toUserIdToUser   User?     @relation("Likes_toUserIdToUser", fields: [toUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Messages {
+  id                             Int       @id @default(autoincrement())
+  fromUserId                     Int?
+  toUserId                       Int?
+  content                        String?
+  is_read                        Boolean?  @default(false)
+  createdAt                      DateTime? @default(now())
+  User_Messages_fromUserIdToUser User?     @relation("Messages_fromUserIdToUser", fields: [fromUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Messages_toUserIdToUser   User?     @relation("Messages_toUserIdToUser", fields: [toUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Preferences {
+  id                Int       @id @default(autoincrement())
+  userId            Int?
+  min_age           Int?
+  max_age           Int?
+  gender_preference String?
+  distance          Int?
+  createdAt         DateTime? @default(now())
+  User              User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Reports {
+  id                            Int       @id @default(autoincrement())
+  reporterId                    Int?
+  reportedId                    Int?
+  reason                        String?
+  createdAt                     DateTime? @default(now())
+  User_Reports_reporterIdToUser User?     @relation("Reports_reporterIdToUser", fields: [reporterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Reports_reportedIdToUser User?     @relation("Reports_reportedIdToUser", fields: [reportedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Subscriptions {
+  id        Int       @id @default(autoincrement())
+  userId    Int?
+  type      String?
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime? @default(now())
+  User      User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Visits {
+  id                          Int       @id @default(autoincrement())
+  visitorId                   Int?
+  visitedId                   Int?
+  createdAt                   DateTime? @default(now())
+  User_Visits_visitorIdToUser User?     @relation("Visits_visitorIdToUser", fields: [visitorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Visits_visitedIdToUser User?     @relation("Visits_visitedIdToUser", fields: [visitedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
