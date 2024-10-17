@@ -37,10 +37,10 @@ app.get('/api/users/:id', async (req, res) => {
 
 // Route pour ajouter un nouvel utilisateur
 app.post('/api/users', async (req, res) => {
-    const { name, email } = req.body;
+    const { name, surname, email, password, date_of_birth } = req.body;
     try {
         const newUser = await prisma.user.create({
-            data: { name, email },
+            data: { name, surname, email, password, date_of_birth },
         });
         res.json({ message: 'Utilisateur ajouté avec succès', data: newUser });
     } catch (error) {
