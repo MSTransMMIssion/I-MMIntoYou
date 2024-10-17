@@ -1,25 +1,25 @@
 import { useEffect, useState } from 'react';
 import axios from "axios";
+import { useRouter } from 'next/router';
 
 export default function Profile() {
     const [user, setUser] = useState({});
     const [formData, setFormData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
-    const [errors, setErrors] = useState({});  // Nouvel état pour les erreurs
+    const [errors, setErrors] = useState({});
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`/api/users/1`);
-                setUser(response.data.data);
-                setFormData(response.data.data);
-            } catch (error) {
-                console.error('Erreur lors de la récupération des données utilisateur', error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
+        const storedUser = localStorage.getItem('loggedUser');
+        if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setUser(userData);
+            setFormData(userData);
+        } else {
+            // Si l'utilisateur n'est pas connecté, rediriger vers la page de login
+            router.push('/login');
+        }
+    }, [router]);
 
     const validateForm = () => {
         let newErrors = {};
@@ -33,20 +33,22 @@ export default function Profile() {
             newErrors.email = 'Le champ "Email" est requis';
         }
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Si aucun message d'erreur, retourne true
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateForm()) {
-            return; // Si le formulaire n'est pas valide, ne pas soumettre
+            return;
         }
 
         try {
-            await axios.put(`/api/users/update/${user.id}`, formData); // Mettre à jour l'utilisateur avec les données modifiées
-            setUser(formData); // Mettre à jour l'état user avec les nouvelles données
+            await axios.put(`/api/users/update/${user.id}`, formData); // Mettre à jour les données utilisateur
+            setUser(formData); // Mettre à jour les données dans l'état
             setIsEditing(false); // Quitter le mode édition
+            // Mettre à jour les informations dans localStorage
+            localStorage.setItem('loggedUser', JSON.stringify(formData));
         } catch (error) {
             console.error('Erreur lors de la mise à jour des données utilisateur', error);
         }
@@ -135,18 +137,18 @@ export default function Profile() {
                                 onChange={handleChange}
                             >
                                 <option value="heterosexual">Hétérosexuel</option>
-                                <option value={"gay"}>Homosexuel</option>
-                                <option value={"bisexual"}>Bisexuel</option>
+                                <option value="gay">Homosexuel</option>
+                                <option value="bisexual">Bisexuel</option>
                             </select>
                         </div>
                         <div>
-              <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  className="p-2 border rounded-lg w-full"
-                  placeholder="Bio"
-              />
+                            <textarea
+                                name="bio"
+                                value={formData.bio}
+                                onChange={handleChange}
+                                className="p-2 border rounded-lg w-full"
+                                placeholder="Bio"
+                            />
                         </div>
                         <div>
                             <input
@@ -190,85 +192,3 @@ export default function Profile() {
         </div>
     );
 }
-
-/*<form onSubmit={faire fonction} className="flex flex-col gap-5">
-    <input className=""
-type="text"
-value={name}
-onChange={(e) => setName(e.target.value)}
-placeholder="Name"
-required
-/>
-<input
-type="text"
-value={surname}
-onChange={(e) => setSurname(e.target.value)}
-placeholder="Surname"
-required
-/>
-<input
-type="email"
-value={email}
-onChange={(e) => setEmail(e.target.value)}
-placeholder="Email"
-required
-/>
-<input
-type="password"
-value={password}
-onChange={(e) => setPassword(e.target.value)}
-placeholder="Password"
-required
-/>
-<input
-type="date"
-value={dateOfBirth}
-onChange={(e) => setDateOfBirth(e.target.value)}
-placeholder="Date of Birth"
-required
-/>
-<select
-value={gender}
-onChange={(e) => setGender(e.target.value)}
-required
->
-<option>Homme</option>
-<option>Femme</option>
-<option>Autre</option>
-</select>
-
-<select
-    value={sexualOrientation}
-    onChange={(e) => setSexualOrientation(e.target.value)}
-    required
->
-    <option>Hétérosexuel</option>
-    <option>Homosexuel</option>
-    <option>Bisexuel</option>
-    <option>Autre</option>
-</select>
-<input
-    type="text"
-    value={profilePicture}
-    onChange={(e) => setProfilPicture(e.target.value)}
-    placeholder="Profil picture"
-    required
-/>
-<input
-    type="text"
-    value={bio}
-    onChange={(e) => setBio(e.target.value)}
-    placeholder="Bio"
-    required
-/>
-<input
-    type="text"
-    value={location}
-    onChange={(e) => setLocation(e.target.value)}
-    placeholder="Location"
-    required
-/>
-
-<button type="submit">Login</button>
-</form>
-*/
