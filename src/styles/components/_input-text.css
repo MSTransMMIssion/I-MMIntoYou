@@ -1,0 +1,6 @@
+input[type="text"], input[type="password"], input[type="email"], input[type="date"], select{
+    border: white 5px solid;
+    background-color: var(--background);
+    border-radius: 5px;
+    padding: 10px;
+}
