@@ -48,6 +48,32 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
+app.put('/api/users/update/:id', async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+
+    try {
+        const updatedUser = await prisma.user.update({
+            where: { id: parseInt(id) },
+            data: {
+                name: data.name,
+                surname: data.surname,
+                email: data.email,
+                password: data.password,
+                date_of_birth: data.date_of_birth,
+                gender: data.gender,
+                sexual_orientation: data.sexual_orientation,
+                bio: data.bio,
+                location: data.location
+            }
+        });
+        res.json({ message: 'Profil mis à jour avec succès', data: updatedUser });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

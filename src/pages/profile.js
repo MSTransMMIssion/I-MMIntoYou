@@ -1,33 +1,57 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from "axios";
 
 export default function Profile() {
-    // Données initiales de l'utilisateur
-    const [user, setUser] = useState({
-        id: '12345',
-        name: 'Antonin',
-        surname: 'Pamart',
-        email: 'antonin@example.com',
-        date_of_birth: '2002-04-10',
-        gender: 'male',
-        sexual_orientation: 'heterosexual',
-        profile_picture: '',
-        bio: 'Étudiant en MMI passionné par le développement et la création de projets.',
-        location: 'Grenoble, France',
-        interests: ['Web Development', 'Design', 'Photographie'],
-        courses: ['HTML & CSS', 'JavaScript', 'UI/UX'],
-        badges: ['MMI Master', 'Hackathon Winner'],
-        createdAt: '2022-01-01',
-        updatedAt: '2022-12-01',
-    });
-
-    // État pour suivre si l'utilisateur est en mode "édition"
+    const [user, setUser] = useState({});
+    const [formData, setFormData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
+    const [errors, setErrors] = useState({});  // Nouvel état pour les erreurs
 
-    // État temporaire pour stocker les modifications pendant l'édition
-    const [formData, setFormData] = useState({ ...user });
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`/api/users/1`);
+                setUser(response.data.data);
+                setFormData(response.data.data);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données utilisateur', error);
+            }
+        };
 
-    // Fonction pour mettre à jour le state local à chaque modification de champs
+        fetchUserData();
+    }, []);
+
+    const validateForm = () => {
+        let newErrors = {};
+        if (!formData.name || formData.name.trim() === '') {
+            newErrors.name = 'Le champ "Nom" est requis';
+        }
+        if (!formData.surname || formData.surname.trim() === '') {
+            newErrors.surname = 'Le champ "Prénom" est requis';
+        }
+        if (!formData.email || formData.email.trim() === '') {
+            newErrors.email = 'Le champ "Email" est requis';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // Si aucun message d'erreur, retourne true
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            return; // Si le formulaire n'est pas valide, ne pas soumettre
+        }
+
+        try {
+            await axios.put(`/api/users/update/${user.id}`, formData); // Mettre à jour l'utilisateur avec les données modifiées
+            setUser(formData); // Mettre à jour l'état user avec les nouvelles données
+            setIsEditing(false); // Quitter le mode édition
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour des données utilisateur', error);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -36,48 +60,11 @@ export default function Profile() {
         });
     };
 
-    // Fonction pour gérer la soumission du formulaire
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setUser(formData); // Mettre à jour les données utilisateur avec les nouvelles valeurs
-        setIsEditing(false); // Quitter le mode édition
-    };
-
-    const fetchMoodleUserData = async (username) => {
-        try {
-            const moodleResponse = await axios.get(`/moodle-api/webservice/rest/server.php`, {
-                params: {
-                    wstoken: 'ba545e95bb07afa2256e1dcaa47c07a5',
-                    moodlewsrestformat: 'json',
-                    wsfunction: 'core_enrol_get_enrolled_users',
-                    courseid: 412,
-                    'options[4][name]': 'userfields',
-                    'options[4][value]': 'profileimageurl',
-                },
-            });
-
-            const userData = moodleResponse.data.find((user) => user.fullname === username);
-
-            if (userData) {
-                setUser((prevUser) => ({
-                    ...prevUser,
-                    profile_picture: userData.profileimageurl,
-                }));
-            }
-        } catch (error) {
-            console.error('Failed to fetch Moodle user data', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchMoodleUserData("Pamart,Antonin");
-    }, []);
-
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-100">
             <div className="bg-white rounded-xl shadow-xl p-8 flex items-center space-x-6">
                 <img
-                    src={user.profile_picture || '/path-to-placeholder-avatar.jpg'}
+                    src={user.profile_picture || '/placeholder-avatar.png'}
                     alt="User Avatar"
                     className="w-24 h-24 rounded-full object-cover border-2 border-blue-500"
                 />
@@ -96,6 +83,7 @@ export default function Profile() {
                                 onChange={handleChange}
                                 className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg w-full"
                             />
+                            {errors.name && <p className="text-red-500">{errors.name}</p>}
                         </div>
                         <div>
                             <input
@@ -105,6 +93,7 @@ export default function Profile() {
                                 onChange={handleChange}
                                 className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg w-full"
                             />
+                            {errors.surname && <p className="text-red-500">{errors.surname}</p>}
                         </div>
                         <div>
                             <input
@@ -115,16 +104,7 @@ export default function Profile() {
                                 className="p-2 border rounded-lg w-full"
                                 placeholder="Email"
                             />
-                        </div>
-                        <div>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="p-2 border rounded-lg w-full"
-                                placeholder="Password"
-                            />
+                            {errors.email && <p className="text-red-500">{errors.email}</p>}
                         </div>
                         <div>
                             <input
@@ -151,6 +131,7 @@ export default function Profile() {
                             <select
                                 className="p-2 border rounded-lg w-full"
                                 name="sexual_orientation"
+                                value={formData.sexual_orientation}
                                 onChange={handleChange}
                             >
                                 <option value="heterosexual">Hétérosexuel</option>
@@ -179,17 +160,6 @@ export default function Profile() {
                         </div>
                     </form>
                 )}
-            </div>
-
-            <div className="mt-8 bg-white rounded-xl shadow-xl p-8">
-                <h2 className="text-2xl font-bold text-gray-900">Centres d'intérêt</h2>
-                <ul className="mt-4 grid grid-cols-2 gap-4">
-                    {user.interests.map((interest, index) => (
-                        <li key={index} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg shadow-sm">
-                            {interest}
-                        </li>
-                    ))}
-                </ul>
             </div>
 
             <div className="mt-8 text-center">
