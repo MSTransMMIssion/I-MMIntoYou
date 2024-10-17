@@ -1,26 +1,35 @@
-import {useEffect, useState} from 'react';
+import { useState, useEffect } from 'react';
 import axios from "axios";
 
 export default function Profile() {
     // Données initiales de l'utilisateur
     const [user, setUser] = useState({
-        name: 'pamarta',
+        id: '12345',
+        name: 'Antonin',
+        surname: 'Pamart',
+        email: 'antonin@example.com',
+        date_of_birth: '2002-04-10',
+        gender: 'male',
+        sexual_orientation: 'heterosexual',
+        profile_picture: '',
         bio: 'Étudiant en MMI passionné par le développement et la création de projets.',
+        location: 'Grenoble, France',
         interests: ['Web Development', 'Design', 'Photographie'],
         courses: ['HTML & CSS', 'JavaScript', 'UI/UX'],
         badges: ['MMI Master', 'Hackathon Winner'],
-        profileImageUrl: '',
+        createdAt: '2022-01-01',
+        updatedAt: '2022-12-01',
     });
 
     // État pour suivre si l'utilisateur est en mode "édition"
     const [isEditing, setIsEditing] = useState(false);
 
     // État temporaire pour stocker les modifications pendant l'édition
-    const [formData, setFormData] = useState({...user});
+    const [formData, setFormData] = useState({ ...user });
 
     // Fonction pour mettre à jour le state local à chaque modification de champs
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value,
@@ -52,95 +61,137 @@ export default function Profile() {
             if (userData) {
                 setUser((prevUser) => ({
                     ...prevUser,
-                    profileImageUrl: userData.profileimageurl,
+                    profile_picture: userData.profileimageurl,
                 }));
-                console.log("(profile.js:50) userData", userData);
-            } else {
-                console.error("Utilisateur non trouvé dans le cours Moodle");
             }
         } catch (error) {
             console.error('Failed to fetch Moodle user data', error);
         }
     };
+
     useEffect(() => {
-        fetchMoodleUserData("Pamart,Antonin").then(r => console.log);
+        fetchMoodleUserData("Pamart,Antonin");
     }, []);
 
-            return (
+    return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-100">
-            {/* Profil Header */}
             <div className="bg-white rounded-xl shadow-xl p-8 flex items-center space-x-6">
                 <img
-                    src={user.profileImageUrl}// Remplace avec le chemin réel de l'avatar de l'utilisateur
+                    src={user.profile_picture || '/path-to-placeholder-avatar.jpg'}
                     alt="User Avatar"
                     className="w-24 h-24 rounded-full object-cover border-2 border-blue-500"
                 />
                 {!isEditing ? (
                     <div>
-                        <h1 className="text-4xl font-extrabold text-gray-900">{user.name}</h1>
+                        <h1 className="text-4xl font-extrabold text-gray-900">{user.name} {user.surname}</h1>
                         <p className="text-lg text-gray-500 mt-1">{user.bio}</p>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg"
+                                className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg w-full"
                             />
                         </div>
-                        <div className="mt-2">
+                        <div>
+                            <input
+                                type="text"
+                                name="surname"
+                                value={formData.surname}
+                                onChange={handleChange}
+                                className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg w-full"
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="p-2 border rounded-lg w-full"
+                                placeholder="Email"
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="p-2 border rounded-lg w-full"
+                                placeholder="Password"
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="date"
+                                name="date_of_birth"
+                                value={formData.date_of_birth}
+                                onChange={handleChange}
+                                className="p-2 border rounded-lg w-full"
+                            />
+                        </div>
+                        <div>
+                            <select
+                                name="gender"
+                                value={formData.gender}
+                                onChange={handleChange}
+                                className="p-2 border rounded-lg w-full"
+                            >
+                                <option value="male">Homme</option>
+                                <option value="female">Femme</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select
+                                className="p-2 border rounded-lg w-full"
+                                name="sexual_orientation"
+                                onChange={handleChange}
+                            >
+                                <option value="heterosexual">Hétérosexuel</option>
+                                <option value={"gay"}>Homosexuel</option>
+                                <option value={"bisexual"}>Bisexuel</option>
+                            </select>
+                        </div>
+                        <div>
               <textarea
                   name="bio"
                   value={formData.bio}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
+                  className="p-2 border rounded-lg w-full"
+                  placeholder="Bio"
               />
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                className="p-2 border rounded-lg w-full"
+                                placeholder="Location"
+                            />
                         </div>
                     </form>
                 )}
             </div>
 
-            {/* Section Centres d'intérêt */}
             <div className="mt-8 bg-white rounded-xl shadow-xl p-8">
                 <h2 className="text-2xl font-bold text-gray-900">Centres d'intérêt</h2>
                 <ul className="mt-4 grid grid-cols-2 gap-4">
                     {user.interests.map((interest, index) => (
-                        <li
-                            key={index}
-                            className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg shadow-sm hover:bg-blue-200 transition duration-200"
-                        >
+                        <li key={index} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg shadow-sm">
                             {interest}
                         </li>
                     ))}
                 </ul>
             </div>
 
-            {/* Section Cours suivis */}
-            <div className="mt-6 bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-800">Cours suivis</h2>
-                <ul className="list-disc ml-5 mt-2">
-                    {user.courses.map((course, index) => (
-                        <li key={index} className="text-gray-600">{course}</li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Section Badges */}
-            <div className="mt-6 bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-800">Badges</h2>
-                <div className="flex space-x-4 mt-2">
-                    {user.badges.map((badge, index) => (
-                        <span key={index} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-              {badge}
-            </span>
-                    ))}
-                </div>
-            </div>
-
-            {/* Bouton Modifier le profil */}
             <div className="mt-8 text-center">
                 {!isEditing ? (
                     <button
