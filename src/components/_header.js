@@ -1,6 +1,9 @@
 import React from "react";
+import {useRouter} from "next/router";
+
 
 export default function Header() {
+const router = useRouter();
     return (
         <>
             <header className="bg-white shadow-md p-4 sticky top-0 z-50">
