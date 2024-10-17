@@ -44,9 +44,9 @@ export default function Signup() {
 
     return (
         <div>
-            <h1>Sign up</h1>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                <input className=""
+            <h1 className="text-center text-4xl m-9 ">Créer un compte</h1>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5 items-center justify-center">
+                <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -74,14 +74,16 @@ export default function Signup() {
                     placeholder="Password"
                     required
                 />
-                <input
+                <input className="placeholder:text-neutral-600"
                     type="date"
                     value={date_of_birth}
                     onChange={(e) => setDateOfBirth(e.target.value)}
-                    placeholder="Date of Birth"
                     required
                 />
-                <button type="submit">Sign Up</button>
+                <div className="flex flex-row gap-2">
+                <button type="submit" className="border-black border-2 border-solid boder-s-3-black bg-[var(--background)] rounded p-2.5 bg-emerald-500 w-40">Créer son compte</button>
+                <button type="reset" className="border-black border-2 border-solid boder-s-3-black bg-[var(--background)] rounded p-2.5 bg-orange-700 w-40">Réinitialiser</button>
+                </div>
             </form>
         </div>
     );

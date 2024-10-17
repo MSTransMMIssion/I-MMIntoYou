@@ -49,25 +49,39 @@ export default function Login() {
 
 
     return (
-        <div>
-            <h1>Sign up</h1>
-            <form onChange={compareData} className="flex flex-col gap-5">
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    required
-                />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    required
-                />
-                <button type="submit">Sign Up</button>
-            </form>
+        <div className="py-16 flex justify-center items-center">
+            <div className="w-full max-w-md">
+                <h1 className="text-center text-4xl m-16">Se connecter</h1>
+                <form onSubmit={compareData} className="flex flex-col gap-5 items-center justify-center">
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        className="border-3 border-[var(--foreground)] bg-[var(--background)] rounded p-2.5 text-white w-full"
+                        required
+                    />
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        className="border-3 border-[var(--foreground)] bg-[var(--background)] rounded p-2.5 text-white w-full"
+                        required
+                    />
+                    <div className="flex flex-row gap-2 my-6">
+                        <button type="submit"
+                                className="border-black border-2 border-solid bg-emerald-500 rounded p-2.5 w-40">
+                            Se connecter
+                        </button>
+                        <button type="reset"
+                                className="border-black border-2 border-solid bg-orange-700 rounded p-2.5 w-40">
+                            Réinitialiser
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
+
     );
 }
