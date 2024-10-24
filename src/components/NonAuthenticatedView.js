@@ -18,6 +18,15 @@ export function NonAuthenticatedView() {
             >
                 Se connecter
             </button>
+            <div className="mt-8">
+                <p className="text-gray-600 text-md">Pas encore inscrit ?</p>
+                <button
+                    onClick={() => router.push('/signup')}
+                    className="text-blue-600 font-semibold hover:underline mt-2"
+                >
+                    Créez un compte ici.
+                </button>
+            </div>
         </div>
     );
 }
