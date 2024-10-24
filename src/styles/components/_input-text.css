@@ -3,5 +3,5 @@ input[type="text"], input[type="password"], input[type="email"], input[type="dat
     background-color: var(--background);
     border-radius: 5px;
     padding: 10px;
-    color: white;
+    color: black;
 }
