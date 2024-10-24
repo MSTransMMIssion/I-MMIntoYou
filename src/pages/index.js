@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { NonAuthenticatedView } from '@/components/NonAuthenticatedView'; // Importer les vues
+import { AuthenticatedView } from '@/components/AuthenticatedView'; // Importer les vues
 
 export default function Home() {
-    const router = useRouter();
-
-    // Simulation de l'état de connexion
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Fonction pour rediriger vers la page de login
-    const handleLoginRedirect = () => {
-        router.push('/login'); // Redirection vers la page de connexion
-    };
+    useEffect(() => {
+        const storedUser = localStorage.getItem('loggedUser');
+        setIsAuthenticated(!!storedUser); // Si un utilisateur est trouvé dans le localStorage, il est connecté
+    }, []);
 
     return (
         <main
@@ -27,23 +26,8 @@ export default function Home() {
                     Le site de rencontre exclusif pour les étudiants et passionnés du domaine MMI (Métiers du Multimédia et de l'Internet).
                 </p>
 
-                {isAuthenticated ? (
-                    <p className="text-green-600 text-lg font-semibold">
-                        Vous êtes connecté ! Explorez votre profil et commencez à rencontrer des gens.
-                    </p>
-                ) : (
-                    <div>
-                        <p className="text-gray-500 text-lg mb-4">
-                            Connectez-vous pour découvrir des profils intéressants et faire de nouvelles rencontres.
-                        </p>
-                        <button
-                            onClick={handleLoginRedirect}
-                            className="bg-gradient-to-r from-blue-400 to-blue-600 text-white px-8 py-3 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-700 transition-transform transform hover:scale-105"
-                        >
-                            Se connecter
-                        </button>
-                    </div>
-                )}
+                {/* Afficher la vue en fonction de l'état de connexion */}
+                {isAuthenticated ? <AuthenticatedView /> : <NonAuthenticatedView />}
             </div>
 
             {/* Section des fonctionnalités */}
@@ -69,17 +53,6 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-            </section>
-
-            {/* Section appel à l'action */}
-            <section className="mt-20 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-16 text-center rounded-lg shadow-lg">
-                <h2 className="text-5xl font-extrabold mb-8">Prêt à rencontrer des passionnés du MMI ?</h2>
-                <button
-                    onClick={handleLoginRedirect}
-                    className="bg-white text-blue-600 font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105"
-                >
-                    Inscrivez-vous maintenant !
-                </button>
             </section>
         </main>
     );
