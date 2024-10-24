@@ -48,7 +48,7 @@ model Likes {
   id                          Int       @id @default(autoincrement())
   fromUserId                  Int?
   toUserId                    Int?
-  status                      String?
+  status                      Boolean?
   createdAt                   DateTime? @default(now())
   User_Likes_fromUserIdToUser User?     @relation("Likes_fromUserIdToUser", fields: [fromUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User_Likes_toUserIdToUser   User?     @relation("Likes_toUserIdToUser", fields: [toUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
