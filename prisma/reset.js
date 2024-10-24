@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
 
@@ -21,13 +21,21 @@ async function resetDatabase() {
                 date_of_birth: '1980-01-01',
                 gender: 'male',
                 sexual_orientation: 'heterosexual',
-                profile_picture: '',
                 bio: 'Administrateur du site',
                 location: 'Grenoble',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
         });
+
+        const profilePicture = await prisma.profilePicture.create({
+            data: {
+                userId: admin.id,
+                url: `https://randomuser.me/api/portraits/men/${admin.id}.jpg`,
+            }
+        });
+
+
 
         console.log(`Administrateur ${admin.email} créé avec succès.`);
     } catch (error) {

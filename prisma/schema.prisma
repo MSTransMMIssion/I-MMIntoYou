@@ -16,7 +16,6 @@ model User {
   date_of_birth                             String
   gender                                    String?
   sexual_orientation                        String?
-  profile_picture                           String?
   bio                                       String?
   location                                  String?
   createdAt                                 DateTime?       @default(now())
@@ -33,6 +32,14 @@ model User {
   Subscriptions                             Subscriptions[]
   Visits_Visits_visitorIdToUser             Visits[]        @relation("Visits_visitorIdToUser")
   Visits_Visits_visitedIdToUser             Visits[]        @relation("Visits_visitedIdToUser")
+  profilePictures  ProfilePicture[] // Un utilisateur peut avoir plusieurs photos de profil
+}
+
+model ProfilePicture {
+  id        Int      @id @default(autoincrement())
+  url       String   // Lien de l'image
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model BlockedUsers {
