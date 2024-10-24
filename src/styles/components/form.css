@@ -1,0 +1,87 @@
+/* Form container */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 1rem;
+    color: #111827;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3b82f6; /* Blue focus */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Blue shadow */
+}
+
+/* Buttons */
+button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background-color: #3b82f6; /* Blue background */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background-color: #2563eb; /* Darker blue */
+    transform: translateY(-2px);
+}
+
+button:active {
+    background-color: #1d4ed8;
+    transform: translateY(0);
+}
+
+/* Reset button */
+button[type="reset"] {
+    background-color: #f87171; /* Red background */
+}
+
+button[type="reset"]:hover {
+    background-color: #ef4444;
+}
+
+button[type="reset"]:active {
+    background-color: #dc2626;
+}
+
+/* Label styling */
+label {
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Error message */
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: -1rem;
+}

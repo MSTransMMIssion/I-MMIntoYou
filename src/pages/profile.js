@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import axios from "axios";
+import axios from 'axios';
 import { useRouter } from 'next/router';
 
 export default function Profile() {
     const [user, setUser] = useState({});
     const [formData, setFormData] = useState({});
+    const [profilePictures, setProfilePictures] = useState([]); // Pour stocker les photos de profil
+    const [newProfilePictures, setNewProfilePictures] = useState([]); // Pour les nouvelles photos uploadées
     const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter();
@@ -15,11 +17,20 @@ export default function Profile() {
             const userData = JSON.parse(storedUser);
             setUser(userData);
             setFormData(userData);
+            fetchProfilePictures(userData.id);
         } else {
-            // Si l'utilisateur n'est pas connecté, rediriger vers la page de login
             router.push('/login');
         }
     }, [router]);
+
+    const fetchProfilePictures = async (userId) => {
+        try {
+            const response = await axios.get(`/api/users/${userId}/profilePictures`);
+            setProfilePictures(response.data.data);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des photos de profil:', error);
+        }
+    };
 
     const validateForm = () => {
         let newErrors = {};
@@ -36,6 +47,19 @@ export default function Profile() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleProfilePictureChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        if (profilePictures.length + files.length > 10) {
+            alert('Vous ne pouvez télécharger que 10 photos au maximum.');
+            return;
+        }
+
+        const pictureURLs = files.map(file => URL.createObjectURL(file)); // URLs locales pour aperçu
+        setNewProfilePictures([...newProfilePictures, ...files]); // Stocke les nouveaux fichiers à uploader
+        setProfilePictures([...profilePictures, ...pictureURLs]); // Pour afficher l'aperçu des nouvelles images
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -43,14 +67,29 @@ export default function Profile() {
             return;
         }
 
+        const formDataToSend = new FormData(); // Pour envoyer les fichiers
+
+        // Ajouter les nouvelles photos au FormData
+        newProfilePictures.forEach((file) => {
+            formDataToSend.append('profilePictures', file);
+        });
+
         try {
-            await axios.put(`/api/users/update/${user.id}`, formData); // Mettre à jour les données utilisateur
-            setUser(formData); // Mettre à jour les données dans l'état
-            setIsEditing(false); // Quitter le mode édition
-            // Mettre à jour les informations dans localStorage
+            // Mise à jour des photos de profil
+            await axios.post(`/api/users/${user.id}/uploadProfilePicture`, formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            // Mise à jour des autres données utilisateur
+            await axios.put(`/api/users/update/${user.id}`, formData);
+
+            setUser(formData);
+            setIsEditing(false);
             localStorage.setItem('loggedUser', JSON.stringify(formData));
         } catch (error) {
-            console.error('Erreur lors de la mise à jour des données utilisateur', error);
+            console.error('Erreur lors de la mise à jour des données utilisateur:', error);
         }
     };
 
@@ -62,76 +101,105 @@ export default function Profile() {
         });
     };
 
+    const handleRemovePicture = (index) => {
+        const newPictures = profilePictures.filter((_, picIndex) => picIndex !== index);
+        setProfilePictures(newPictures);
+    };
+
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-100">
-            <div className="bg-white rounded-xl shadow-xl p-8 flex items-center space-x-6">
-                <img
-                    src={user.profile_picture || '/placeholder-avatar.png'}
-                    alt="User Avatar"
-                    className="w-24 h-24 rounded-full object-cover border-2 border-blue-500"
-                />
-                {!isEditing ? (
-                    <div>
-                        <h1 className="text-4xl font-extrabold text-gray-900">{user.name} {user.surname}</h1>
-                        <p className="text-lg text-gray-500 mt-1">{user.bio}</p>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg w-full"
-                            />
-                            {errors.name && <p className="text-red-500">{errors.name}</p>}
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                name="surname"
-                                value={formData.surname}
-                                onChange={handleChange}
-                                className="text-4xl font-extrabold text-gray-900 p-2 border rounded-lg w-full"
-                            />
-                            {errors.surname && <p className="text-red-500">{errors.surname}</p>}
-                        </div>
-                        <div>
+        <div className="max-w-5xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center">
+            <div className="bg-white rounded-3xl shadow-2xl p-10 w-full">
+                {/* Header du profil */}
+                <div className="flex items-center space-x-8 mb-10">
+                    {/* Afficher les photos de profil */}
+                    {Array.isArray(profilePictures) && profilePictures.length > 0 ? (
+                        profilePictures.map((pic, index) => (
+                            <div key={index} className="relative">
+                                <img
+                                    src={pic.url} // Fallback au cas où le type n'est pas reconnu
+                                    alt={`Profile ${index}`}
+                                    className="w-20 h-20 object-cover rounded-full border"
+                                />
+                                <button
+                                    onClick={() => handleRemovePicture(index)}
+                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                >
+                                    X
+                                </button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>Aucune photo de profil disponible.</p>
+                    )}
+
+                    {/* Ajouter des nouvelles photos */}
+                    {profilePictures.length < 10 && (
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleProfilePictureChange}
+                            className="p-2 border rounded-lg"
+                        />
+                    )}
+                </div>
+
+                <div>
+                    {!isEditing ? (
+                        <>
+                            <h1 className="text-5xl font-bold text-gray-900">{user.name} {user.surname}</h1>
+                            <p className="text-lg text-gray-500 mt-2">{user.bio}</p>
+                        </>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-6 w-full">
+                            <div className="flex space-x-4">
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    placeholder="Nom"
+                                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
+                                />
+                                {errors.name && <p className="text-red-500">{errors.name}</p>}
+                                <input
+                                    type="text"
+                                    name="surname"
+                                    value={formData.surname}
+                                    onChange={handleChange}
+                                    placeholder="Prénom"
+                                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
+                                />
+                                {errors.surname && <p className="text-red-500">{errors.surname}</p>}
+                            </div>
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="p-2 border rounded-lg w-full"
                                 placeholder="Email"
+                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
                             />
                             {errors.email && <p className="text-red-500">{errors.email}</p>}
-                        </div>
-                        <div>
                             <input
                                 type="date"
                                 name="date_of_birth"
                                 value={formData.date_of_birth}
                                 onChange={handleChange}
-                                className="p-2 border rounded-lg w-full"
+                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
                             />
-                        </div>
-                        <div>
                             <select
                                 name="gender"
                                 value={formData.gender}
                                 onChange={handleChange}
-                                className="p-2 border rounded-lg w-full"
+                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
                             >
                                 <option value="male">Homme</option>
                                 <option value="female">Femme</option>
                                 <option value="other">Autre</option>
                             </select>
-                        </div>
-                        <div>
                             <select
-                                className="p-2 border rounded-lg w-full"
+                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
                                 name="sexual_orientation"
                                 value={formData.sexual_orientation}
                                 onChange={handleChange}
@@ -140,54 +208,51 @@ export default function Profile() {
                                 <option value="gay">Homosexuel</option>
                                 <option value="bisexual">Bisexuel</option>
                             </select>
-                        </div>
-                        <div>
                             <textarea
                                 name="bio"
                                 value={formData.bio}
                                 onChange={handleChange}
-                                className="p-2 border rounded-lg w-full"
-                                placeholder="Bio"
+                                placeholder="Parlez-nous de vous..."
+                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
                             />
-                        </div>
-                        <div>
                             <input
                                 type="text"
                                 name="location"
                                 value={formData.location}
                                 onChange={handleChange}
-                                className="p-2 border rounded-lg w-full"
-                                placeholder="Location"
+                                placeholder="Localisation"
+                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition"
                             />
-                        </div>
-                    </form>
-                )}
-            </div>
+                        </form>
+                    )}
+                </div>
 
-            <div className="mt-8 text-center">
-                {!isEditing ? (
-                    <button
-                        className="bg-blue-500 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300"
-                        onClick={() => setIsEditing(true)}
-                    >
-                        Modifier le profil
-                    </button>
-                ) : (
-                    <div className="flex justify-center space-x-4">
+                {/* Boutons */}
+                <div className="text-center mt-8">
+                    {!isEditing ? (
                         <button
-                            onClick={handleSubmit}
-                            className="bg-green-500 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-green-600 transition duration-300"
+                            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:opacity-90 transition-transform transform hover:scale-105"
+                            onClick={() => setIsEditing(true)}
                         >
-                            Sauvegarder
+                            Modifier le profil
                         </button>
-                        <button
-                            onClick={() => setIsEditing(false)}
-                            className="bg-red-500 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-red-600 transition duration-300"
-                        >
-                            Annuler
-                        </button>
-                    </div>
-                )}
+                    ) : (
+                        <div className="flex justify-center space-x-4">
+                            <button
+                                onClick={handleSubmit}
+                                className="bg-green-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105"
+                            >
+                                Sauvegarder
+                            </button>
+                            <button
+                                onClick={() => setIsEditing(false)}
+                                className="bg-red-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-red-600 transition-transform transform hover:scale-105"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
