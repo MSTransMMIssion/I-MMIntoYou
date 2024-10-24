@@ -64,13 +64,11 @@ export default function Header() {
                         {isAuthenticated ? (
                             <>
                                 <button
-                                    className="border border-blue-500 text-blue-500 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-colors duration-300 shadow-md"
                                     onClick={handleLogout}
                                 >
                                     Déconnexion
                                 </button>
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md"
                                     onClick={() => router.push('/profile')}
                                 >
                                     Mon profil
@@ -79,13 +77,11 @@ export default function Header() {
                         ) : (
                             <>
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md"
                                     onClick={() => router.push('/login')}
                                 >
                                     Se connecter
                                 </button>
                                 <button
-                                    className="border border-blue-500 text-blue-500 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-colors duration-300 shadow-md"
                                     onClick={() => router.push('/signup')}
                                 >
                                     S'inscrire
