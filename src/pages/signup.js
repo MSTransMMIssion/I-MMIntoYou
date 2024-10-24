@@ -75,14 +75,14 @@ export default function Signup() {
                     required
                 />
                 <input className="placeholder:text-neutral-600"
-                    type="date"
-                    value={date_of_birth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                    required
+                       type="date"
+                       value={date_of_birth}
+                       onChange={(e) => setDateOfBirth(e.target.value)}
+                       required
                 />
                 <div className="flex flex-row gap-2">
-                <button type="submit" className="border-black border-2 border-solid boder-s-3-black bg-[var(--background)] rounded p-2.5 bg-emerald-500 w-40">Créer son compte</button>
-                <button type="reset" className="border-black border-2 border-solid boder-s-3-black bg-[var(--background)] rounded p-2.5 bg-orange-700 w-40">Réinitialiser</button>
+                    <button type="submit" className="border-black border-2 border-solid boder-s-3-black bg-[var(--background)] rounded p-2.5 bg-emerald-500 w-40">Créer son compte</button>
+                    <button type="reset" className="border-black border-2 border-solid boder-s-3-black bg-[var(--background)] rounded p-2.5 bg-orange-700 w-40">Réinitialiser</button>
                 </div>
             </form>
         </div>

@@ -63,13 +63,14 @@ export default function Login() {
 
     return (
         <div>
-            <h1>Login</h1>
-            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+            <h1 className="text-center text-4xl m-9">Login</h1>
+            <form onSubmit={handleLogin} className="flex flex-col gap-5 items-center justify-center">
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
+                    className="border border-gray-400 p-2 rounded w-80"
                     required
                 />
                 <input
@@ -77,9 +78,17 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
+                    className="border border-gray-400 p-2 rounded w-80"
                     required
                 />
-                <button type="submit">Login</button>
+                <div className="flex flex-row gap-2">
+                    <button type="submit" className="border-black border-2 border-solid bg-emerald-500 rounded p-2.5 w-40">
+                        Login
+                    </button>
+                    <button type="reset" className="border-black border-2 border-solid bg-orange-700 rounded p-2.5 w-40">
+                        Réinitialiser
+                    </button>
+                </div>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
