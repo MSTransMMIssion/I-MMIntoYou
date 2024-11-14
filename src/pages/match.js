@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import User_cards from '/src/components/cards/user_cards';
+import ProfileCard from "@/components/cards/ProfileCard";
 
 export default function Home() {
     const router = useRouter();
@@ -10,6 +10,7 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [profile, setProfile] = useState({});
+    const [profilePictures, setProfilePictures] = useState([]);
 
     const handleLoginRedirect = () => {
         router.push('/login');
@@ -42,6 +43,13 @@ export default function Home() {
         }
     }, [isAuthenticated]);
 
+    // Appeler fetchProfilePictures chaque fois que l'index d'utilisateur change
+    useEffect(() => {
+        if (users.length > 0) {
+            fetchProfilePictures(users[currentIndex].id);
+        }
+    }, [currentIndex, users]);
+
     const handleNext = () => {
         if (currentIndex < users.length - 1) {
             setCurrentIndex(currentIndex + 1);
@@ -71,7 +79,7 @@ export default function Home() {
                 genderFilter = allUsers.filter(user => user.gender === profilGender);
                 break;
             case 'bisexual':
-                genderFilter = allUsers; // Pas de filtrage pour les personnes bisexuelles
+                genderFilter = allUsers;
                 break;
             default:
                 genderFilter = allUsers.filter(user => user.gender === getOppositeGender(profilGender));
@@ -80,7 +88,6 @@ export default function Home() {
         return genderFilter;
     };
 
-    // Fonction pour calculer l'âge à partir de la date de naissance (format 'aaaa-mm-jj')
     const calculateAge = (dateOfBirth) => {
         const [year, month, day] = dateOfBirth.split('-').map(Number);
         const today = new Date();
@@ -102,32 +109,50 @@ export default function Home() {
         });
     };
 
+    // Récupérer les photos de profil pour l'utilisateur actuellement affiché
+    const fetchProfilePictures = async (userId) => {
+        try {
+            const response = await axios.get(`/api/users/${userId}/profilePictures`);
+            setProfilePictures(response.data.data);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des photos de profil:', error);
+        }
+    };
+
     return (
         <main className="min-h-screen bg-cover bg-center p-6 relative" style={{ backgroundImage: 'url(/homepage-background.webp)' }}>
-            <div className="absolute inset-0 bg-black opacity-40"></div>
-            <div className="relative z-10 max-w-4xl mx-auto bg-white bg-opacity-95 shadow-2xl rounded-xl p-10 text-center">
+            <div className="relative z-10 max-w-4xl mx-auto bg-white flex items-center justify-center bg-opacity-50 shadow-2xl rounded-xl p-10 text-center">
                 {isAuthenticated ? (
                     <>
                         {users && users.length > 0 ? (
-                            <div>
-                                <User_cards key={users[currentIndex].id} user={users[currentIndex]} />
+                            <div className="flex items-center justify-center flex-row">
 
-                                <div className="flex justify-between mt-4">
-                                    <button
-                                        onClick={handlePrev}
-                                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
-                                        disabled={currentIndex === 0}
-                                    >
-                                        Précédent
-                                    </button>
-                                    <button
-                                        onClick={handleNext}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                        disabled={currentIndex === users.length - 1}
-                                    >
-                                        Suivant
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={handlePrev}
+                                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                                    disabled={currentIndex === 0}
+                                >
+                                    Précédent
+                                </button>
+
+                                <ProfileCard
+                                    user={users[currentIndex]}
+                                    profilePictures={profilePictures}
+                                    isEditable={false}
+                                    onEdit={() => {
+                                        return true;
+                                    }}
+                                    showActions={true}
+                                />
+
+                                <button
+                                    onClick={handleNext}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                    disabled={currentIndex === users.length - 1}
+                                >
+                                    Suivant
+                                </button>
+
                             </div>
                         ) : (
                             <p className="text-gray-500">Aucun utilisateur trouvé.</p>
