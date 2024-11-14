@@ -19,8 +19,8 @@ async function main() {
         // Création d'un utilisateur
         const user = await prisma.user.create({
             data: {
-                name: faker.name.firstName(),
-                surname: faker.name.lastName(),
+                name: faker.person.firstName(),
+                surname: faker.person.lastName(),
                 email: faker.internet.email(),
                 password: faker.internet.password(),
                 date_of_birth: birthdate,

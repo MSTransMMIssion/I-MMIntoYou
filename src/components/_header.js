@@ -64,11 +64,13 @@ export default function Header() {
                         {isAuthenticated ? (
                             <>
                                 <button
+                                    className={'button'}
                                     onClick={handleLogout}
                                 >
                                     Déconnexion
                                 </button>
                                 <button
+                                    className={'button'}
                                     onClick={() => router.push('/profile')}
                                 >
                                     Mon profil
@@ -77,11 +79,13 @@ export default function Header() {
                         ) : (
                             <>
                                 <button
+                                    className={'button'}
                                     onClick={() => router.push('/login')}
                                 >
                                     Se connecter
                                 </button>
                                 <button
+                                    className={'button'}
                                     onClick={() => router.push('/signup')}
                                 >
                                     S'inscrire

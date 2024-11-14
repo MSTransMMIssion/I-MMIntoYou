@@ -38,7 +38,7 @@ textarea:focus {
 }
 
 /* Buttons */
-button {
+.button {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 600;
@@ -50,14 +50,14 @@ button {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-button:hover {
+.button:hover {
     background-color: #2563eb; /* Darker blue */
-    transform: translateY(-2px);
+    transform: scale(1.05);
 }
 
-button:active {
+.button:active {
     background-color: #1d4ed8;
-    transform: translateY(0);
+    transform: scale(0.95);
 }
 
 /* Reset button */
