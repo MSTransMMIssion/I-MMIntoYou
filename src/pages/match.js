@@ -5,10 +5,11 @@ import User_cards from '/src/components/cards/user_cards';
 
 export default function Home() {
     const router = useRouter();
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
-    const [currentIndex, setCurrentIndex] = useState(0);  // Ajout de l'état pour suivre l'index actuel
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [profile, setProfile] = useState({});
 
     const handleLoginRedirect = () => {
         router.push('/login');
@@ -19,7 +20,10 @@ export default function Home() {
             const response = await axios.get('/api/users', {
                 headers: { 'Content-Type': 'application/json' },
             });
-            setUsers(response.data.data);  // Mise à jour des utilisateurs
+            const allUsers = response.data.data;
+            const filteredUsersBySexualOrientation = profilFilter(allUsers);
+            const filteredUsers = ageFilter(filteredUsersBySexualOrientation);
+            setUsers(filteredUsers);
         } catch (error) {
             console.error('Error fetching users:', error.message);
             setError(error.message);
@@ -27,50 +31,99 @@ export default function Home() {
     };
 
     useEffect(() => {
+        const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+
+        if (loggedUser) {
+            setIsAuthenticated(true);
+            setProfile(loggedUser);
+        }
         if (isAuthenticated) {
-            getUsers();  // Récupère les utilisateurs si authentifié
+            getUsers();
         }
     }, [isAuthenticated]);
 
-    // Fonction pour passer à l'utilisateur suivant
     const handleNext = () => {
         if (currentIndex < users.length - 1) {
             setCurrentIndex(currentIndex + 1);
         }
     };
 
-    // Fonction pour revenir à l'utilisateur précédent
     const handlePrev = () => {
         if (currentIndex > 0) {
             setCurrentIndex(currentIndex - 1);
         }
     };
 
+    const getOppositeGender = (gender) => {
+        return gender === 'male' ? 'female' : 'male';
+    };
+
+    const profilFilter = (allUsers) => {
+        const profilGender = profile.gender;
+        const profilSexualOrientation = profile.sexual_orientation;
+        let genderFilter = [];
+
+        switch (profilSexualOrientation) {
+            case 'heterosexual':
+                genderFilter = allUsers.filter(user => user.gender === getOppositeGender(profilGender));
+                break;
+            case 'homosexual':
+                genderFilter = allUsers.filter(user => user.gender === profilGender);
+                break;
+            case 'bisexual':
+                genderFilter = allUsers; // Pas de filtrage pour les personnes bisexuelles
+                break;
+            default:
+                genderFilter = allUsers.filter(user => user.gender === getOppositeGender(profilGender));
+                break;
+        }
+        return genderFilter;
+    };
+
+    // Fonction pour calculer l'âge à partir de la date de naissance (format 'aaaa-mm-jj')
+    const calculateAge = (dateOfBirth) => {
+        const [year, month, day] = dateOfBirth.split('-').map(Number);
+        const today = new Date();
+        let age = today.getFullYear() - year;
+        const hasHadBirthdayThisYear = (today.getMonth() > month - 1) || (today.getMonth() === month - 1 && today.getDate() >= day);
+        if (!hasHadBirthdayThisYear) {
+            age -= 1;
+        }
+        return age;
+    };
+
+    const ageFilter = (users) => {
+        const ageMin = profile.min_age_preference;
+        const ageMax = profile.max_age_preference;
+
+        return users.filter(user => {
+            const userAge = calculateAge(user.date_of_birth);
+            return userAge >= ageMin && userAge <= ageMax;
+        });
+    };
+
     return (
         <main className="min-h-screen bg-cover bg-center p-6 relative" style={{ backgroundImage: 'url(/homepage-background.webp)' }}>
             <div className="absolute inset-0 bg-black opacity-40"></div>
             <div className="relative z-10 max-w-4xl mx-auto bg-white bg-opacity-95 shadow-2xl rounded-xl p-10 text-center">
-
                 {isAuthenticated ? (
                     <>
-                        {/* Afficher un utilisateur à la fois */}
                         {users && users.length > 0 ? (
                             <div>
-                                <User_cards key={users[currentIndex].id} user={users[currentIndex]} />  {/* Affiche l'utilisateur à l'index actuel */}
+                                <User_cards key={users[currentIndex].id} user={users[currentIndex]} />
 
-                                {/* Boutons pour naviguer entre les utilisateurs */}
                                 <div className="flex justify-between mt-4">
                                     <button
                                         onClick={handlePrev}
                                         className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
-                                        disabled={currentIndex === 0}  // Désactiver le bouton si on est au premier utilisateur
+                                        disabled={currentIndex === 0}
                                     >
                                         Précédent
                                     </button>
                                     <button
                                         onClick={handleNext}
                                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                        disabled={currentIndex === users.length - 1}  // Désactiver si on est au dernier utilisateur
+                                        disabled={currentIndex === users.length - 1}
                                     >
                                         Suivant
                                     </button>
@@ -94,7 +147,7 @@ export default function Home() {
                     </div>
                 )}
 
-                {error && <p className="text-red-500 mt-4">{error}</p>}  {/* Affichage des erreurs */}
+                {error && <p className="text-red-500 mt-4">{error}</p>}
             </div>
         </main>
     );
