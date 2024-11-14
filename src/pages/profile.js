@@ -105,7 +105,6 @@ export default function Profile() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-lg overflow-hidden">
                 {/* ProfileCard Component */}
                 <ProfileCard
                     user={user}
@@ -207,6 +206,5 @@ export default function Profile() {
                     </div>
                 )}
             </div>
-        </div>
     );
 }

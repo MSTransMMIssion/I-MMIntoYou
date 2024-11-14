@@ -37,6 +37,13 @@ export default function ProfileCard({
         setShowFullBio((prev) => !prev);
     };
 
+    const calculateAge = (date_of_birth) => {
+        const birthDate = new Date(date_of_birth);
+        const difference = Date.now() - birthDate.getTime();
+        const ageDate = new Date(difference);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+    };
+
     return (
         <div className="w-full max-w-md bg-white rounded-3xl shadow-lg overflow-hidden">
             <div className="relative">
@@ -70,7 +77,7 @@ export default function ProfileCard({
                 </div>
 
                 {/* Match Label */}
-                {!isEditable && (
+                {isEditable && (
                     <div
                         className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
                         ❤️ Best Match
@@ -91,7 +98,7 @@ export default function ProfileCard({
                         />
                     )}
                 </div>
-                <p className="text-lg text-gray-500 mb-4">
+                <p className="text-lg text-left text-gray-500 mb-4 whitespace-pre-line leading-relaxed">
                     {user.bio
                         ? showFullBio
                             ? user.bio
@@ -100,7 +107,7 @@ export default function ProfileCard({
                     {user.bio && user.bio.length > 100 && (
                         <button
                             onClick={toggleBio}
-                            className="appearance-none text-blue-500 ml-2 hover:underline"
+                            className="text-blue-500 ml-2 hover:underline"
                         >
                             {showFullBio ? "Voir moins" : "Voir plus"}
                         </button>
@@ -108,7 +115,7 @@ export default function ProfileCard({
                 </p>
                 <div className="text-left text-gray-700 space-y-2">
                     <p><strong>Email :</strong> {user.email}</p>
-                    <p><strong>Date de naissance :</strong> {user.date_of_birth}</p>
+                    <p><strong>Âge</strong> {calculateAge(user.date_of_birth)}</p>
                     <p><strong>Genre :</strong> {user.gender}</p>
                     <p><strong>Orientation :</strong> {user.sexual_orientation}</p>
                     <p><strong>Localisation :</strong> {user.location}</p>
