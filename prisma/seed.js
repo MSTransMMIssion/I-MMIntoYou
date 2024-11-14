@@ -19,8 +19,8 @@ async function main() {
         // Création d'un utilisateur
         const user = await prisma.user.create({
             data: {
-                name: faker.name.firstName(),
-                surname: faker.name.lastName(),
+                name: faker.person.firstName(),
+                surname: faker.person.lastName(),
                 email: faker.internet.email(),
                 password: faker.internet.password(),
                 date_of_birth: birthdate,
@@ -30,6 +30,8 @@ async function main() {
                 location: "Grenoble",
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                min_age_preference: faker.number.int({min: 18, max: 24}),
+                max_age_preference: faker.number.int({min: 25, max: 35})
             },
         });
         for (let j = 0; j < 5; j++) {
@@ -40,18 +42,6 @@ async function main() {
                 }
             });
         }
-        // Création des préférences associées à l'utilisateur
-        const preferences = await prisma.preferences.create({
-            data: {
-                userId: user.id, // Associer les préférences à l'utilisateur créé
-                min_age: faker.number.int({min: 18, max: 25}),
-                max_age: faker.number.int({min: 26, max: 40}),
-                gender_preference: faker.helpers.arrayElement(['male', 'female', 'both']),
-                distance: faker.number.int({min: 10, max: 100}), // Distance en kilomètres
-                createdAt: new Date(),
-            },
-        });
-
 
         console.log(`Utilisateur ${user.name} créé avec succès avec des préférences.`);
     }
