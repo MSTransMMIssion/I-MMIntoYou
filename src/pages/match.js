@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import ProfileCard from "@/components/cards/ProfileCard";
+import bcrypt from "bcryptjs";
 
 export default function Home() {
     const router = useRouter();
@@ -43,7 +44,6 @@ export default function Home() {
         }
     }, [isAuthenticated]);
 
-    // Appeler fetchProfilePictures chaque fois que l'index d'utilisateur change
     useEffect(() => {
         if (users.length > 0) {
             fetchProfilePictures(users[currentIndex].id);
@@ -103,7 +103,6 @@ export default function Home() {
         });
     };
 
-    // Récupérer les photos de profil pour l'utilisateur actuellement affiché
     const fetchProfilePictures = async (userId) => {
         try {
             const response = await axios.get(`/api/users/${userId}/profilePictures`);
@@ -115,11 +114,40 @@ export default function Home() {
 
     const liked = (userId) => {
         console.log("User liked:", userId);
-
+        postLikes(userId, 1);
     };
 
     const refused = (userId) => {
         console.log("User refused:", userId);
+        postLikes(userId, 2);
+    };
+
+    const postLikes = async (toUserId, status) => {
+        const fromUserId = profile.id;
+        const formData = {
+            fromUserId,
+            toUserId,
+            status, // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MODIFIER LE PRISMA CAR DANS LA DATABASE c'est du booléen et moi je met du int !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        };
+
+        try {
+            const response = await fetch('/api/likes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                console.log(result);
+            } else {
+                setError('Erreur : ' + result.error);
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'inscription :", error);
+        }
     };
 
     return (
@@ -129,17 +157,15 @@ export default function Home() {
                     <>
                         {users && users.length > 0 ? (
                             <div className="flex items-center justify-center flex-row">
-
                                 <ProfileCard
                                     user={users[currentIndex]}
                                     profilePictures={profilePictures}
                                     isEditable={false}
-                                    onEdit={() => {return true;}}
+                                    onEdit={() => true}
                                     showActions={true}
                                     refused={refused}
                                     liked={liked}
                                 />
-
                             </div>
                         ) : (
                             <p className="text-gray-500">Aucun utilisateur trouvé.</p>

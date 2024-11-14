@@ -217,3 +217,18 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
 });
+app.post('/api/likes', async (req, res) => {
+    const {fromUserId, toUserId, status} = req.body;
+    try {
+        const newLike = await prisma.likes.create({
+            data: {fromUserId, toUserId, status},
+        });
+        res.json({ message: 'Le like à été posé', data:newLike});
+    } catch (error){
+        if (error.code === "P2002") {  // Erreur Prisma pour doublon d'email
+            res.status(400).json({ error: "Ce Like est déjà posé." });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
+    }
+});
