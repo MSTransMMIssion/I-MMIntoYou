@@ -21,7 +21,15 @@ async function resetDatabase() {
                 date_of_birth: '1980-01-01',
                 gender: 'male',
                 sexual_orientation: 'heterosexual',
-                bio: 'Administrateur du site',
+                bio: '👨‍💻 Admin - Administrateur d\'I\'MMIntoYou\n' +
+                    '\n' +
+                    '🧠 Cerveau derrière vos matchs ✨ | 💖 Cupidon en code JavaScript\n' +
+                    '\n' +
+                    'Salut à tous ! Moi, c’est Antoine, l’esprit (peut-être un peu trop passionné) qui veille sur les cœurs brisés et les âmes en quête d\'amour... virtuel, certes, mais toujours un peu magique ! 💫 Ici, entre deux lignes de code et trois tasses de café ☕, je vous concocte des algorithmes aux petits oignons 🧅 pour vous trouver le ou la parfait(e) "de l’autre côté de l’écran".\n' +
+                    '\n' +
+                    '💌 Pourquoi je fais ça ? Parce que j’aime l’idée que chaque bug peut être une rencontre inattendue et que chaque match est une victoire pour le serveur 💻 (et pour moi aussi, j’avoue). Et si jamais un message étrange vous apparaît 🐛 ou qu’une photo se charge bizarrement, c’est peut-être juste moi qui teste encore une nouvelle fonctionnalité.\n' +
+                    '\n' +
+                    'Alors... prêts à swiper en toute confiance ? 😉',
                 location: 'Grenoble',
                 createdAt: new Date(),
                 updatedAt: new Date(),
