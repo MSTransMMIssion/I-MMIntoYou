@@ -56,12 +56,6 @@ export default function Home() {
         }
     };
 
-    const handlePrev = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(currentIndex - 1);
-        }
-    };
-
     const getOppositeGender = (gender) => {
         return gender === 'male' ? 'female' : 'male';
     };
@@ -119,6 +113,15 @@ export default function Home() {
         }
     };
 
+    const liked = (userId) => {
+        console.log("User liked:", userId);
+
+    };
+
+    const refused = (userId) => {
+        console.log("User refused:", userId);
+    };
+
     return (
         <main className="min-h-screen bg-cover bg-center p-6 relative" style={{ backgroundImage: 'url(/homepage-background.webp)' }}>
             <div className="relative z-10 max-w-4xl mx-auto bg-white flex items-center justify-center bg-opacity-50 shadow-2xl rounded-xl p-10 text-center">
@@ -127,31 +130,15 @@ export default function Home() {
                         {users && users.length > 0 ? (
                             <div className="flex items-center justify-center flex-row">
 
-                                <button
-                                    onClick={handlePrev}
-                                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
-                                    disabled={currentIndex === 0}
-                                >
-                                    Précédent
-                                </button>
-
                                 <ProfileCard
                                     user={users[currentIndex]}
                                     profilePictures={profilePictures}
                                     isEditable={false}
-                                    onEdit={() => {
-                                        return true;
-                                    }}
+                                    onEdit={() => {return true;}}
                                     showActions={true}
+                                    refused={refused}
+                                    liked={liked}
                                 />
-
-                                <button
-                                    onClick={handleNext}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                    disabled={currentIndex === users.length - 1}
-                                >
-                                    Suivant
-                                </button>
 
                             </div>
                         ) : (
