@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { PencilIcon, XMarkIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
-
+import { PencilIcon, ArrowLeftIcon, ArrowRightIcon, StarIcon, HeartIcon, XMarkIcon, BoltIcon } from '@heroicons/react/24/solid';
 export default function Profile() {
     const [user, setUser] = useState({});
     const [formData, setFormData] = useState({});
@@ -97,6 +96,7 @@ export default function Profile() {
             setUser(formData);
             setIsEditing(false);
             localStorage.setItem('loggedUser', JSON.stringify(formData));
+            await fetchProfilePictures(user.id);
         } catch (error) {
             console.error('Erreur lors de la mise à jour des données utilisateur:', error);
         }
@@ -117,7 +117,7 @@ export default function Profile() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
-            <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-lg overflow-hidden">
                 <div className="relative">
                     {/* Carousel for profile pictures */}
                     <div className="flex items-center justify-center overflow-hidden relative">
@@ -125,10 +125,10 @@ export default function Profile() {
                             <img
                                 src={profilePictures[currentIndex].url}
                                 alt={`Profile ${currentIndex}`}
-                                className="w-full h-80 object-cover"
+                                className="w-full h-96 object-cover rounded-t-3xl"
                             />
                         ) : (
-                            <div className="w-full h-80 bg-gray-200 flex items-center justify-center text-gray-500">
+                            <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-gray-500 rounded-t-3xl">
                                 Aucune photo de profil disponible
                             </div>
                         )}
@@ -137,18 +137,13 @@ export default function Profile() {
                             onClick={handlePreviousImage}
                             className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100"
                         >
-                            <ArrowLeftIcon
-                                className="h-6 w-6 text-black"
-                            />
+                            <ArrowLeftIcon className="h-6 w-6 text-black" />
                         </button>
                         <button
                             onClick={handleNextImage}
                             className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100"
                         >
-                            <ArrowRightIcon
-                                className="h-6 w-6 text-black"
-                            />
-
+                            <ArrowRightIcon className="h-6 w-6 text-black" />
                         </button>
                         {isEditing && (
                             <input
@@ -160,6 +155,12 @@ export default function Profile() {
                             />
                         )}
                     </div>
+                    {/* Match Label */}
+                    {!isEditing && (
+                        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+                            ❤️ Best Match
+                        </div>
+                    )}
                 </div>
 
                 {/* Profile Details */}
@@ -177,13 +178,27 @@ export default function Profile() {
                     </div>
                     {!isEditing ? (
                         <>
-                            <p className="text-lg text-gray-600 mb-4">{user.bio}</p>
+                            <p className="text-lg text-gray-500 mb-4">{user.bio}</p>
                             <div className="text-left text-gray-700 space-y-2">
                                 <p><strong>Email :</strong> {user.email}</p>
                                 <p><strong>Date de naissance :</strong> {user.date_of_birth}</p>
                                 <p><strong>Genre :</strong> {user.gender}</p>
                                 <p><strong>Orientation :</strong> {user.sexual_orientation}</p>
                                 <p><strong>Localisation :</strong> {user.location}</p>
+                            </div>
+                            <div className="flex justify-around px-6 py-4 mt-6">
+                                <button className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
+                                    <StarIcon className="h-6 w-6 text-yellow-400" />
+                                </button>
+                                <button className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
+                                    <HeartIcon className="h-6 w-6 text-red-500" />
+                                </button>
+                                <button className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
+                                    <XMarkIcon className="h-6 w-6 text-gray-400" />
+                                </button>
+                                <button className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
+                                    <BoltIcon className="h-6 w-6 text-purple-500" />
+                                </button>
                             </div>
                         </>
                     ) : (
@@ -256,12 +271,13 @@ export default function Profile() {
                             />
                             <div className="flex justify-center space-x-4 mt-6">
                                 <button
-                                    onClick={handleSubmit}
+                                    type="submit"
                                     className="bg-green-500 text-white font-semibold px-6 py-3 rounded-full hover:bg-green-600"
                                 >
                                     Sauvegarder
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={() => setIsEditing(false)}
                                     className="bg-red-500 text-white font-semibold px-6 py-3 rounded-full hover:bg-red-600"
                                 >
