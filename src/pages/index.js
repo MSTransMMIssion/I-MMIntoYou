@@ -9,7 +9,7 @@ export default function Home() {
 
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedUser');
-        setIsAuthenticated(!!storedUser); // Si un utilisateur est trouvé dans le localStorage, il est connecté
+        setIsAuthenticated(!!storedUser);
     }, []);
 
     return (
