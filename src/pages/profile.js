@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 export default function Profile() {
     const [user, setUser] = useState({});
@@ -109,31 +110,25 @@ export default function Profile() {
     return (
         <div className="max-w-5xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center">
             <div className="bg-white rounded-3xl shadow-2xl p-10 w-full">
-                {/* Header du profil */}
                 <div className="flex items-center space-x-8 mb-10">
-                    {/* Afficher les photos de profil */}
-                    {Array.isArray(profilePictures) && profilePictures.length > 0 ? (
-                        profilePictures.map((pic, index) => (
-                            <div key={index} className="relative">
-                                <img
-                                    src={pic.url} // Fallback au cas où le type n'est pas reconnu
-                                    alt={`Profile ${index}`}
-                                    className="w-20 h-20 object-cover rounded-full border"
-                                />
+                    {profilePictures.map((pic, index) => (
+                        <div key={index} className="relative">
+                            <img
+                                src={pic.url || URL.createObjectURL(pic)}
+                                alt={`Profile ${index}`}
+                                className="w-20 h-20 object-cover rounded-full border"
+                            />
+                            {isEditing && (
                                 <button
                                     onClick={() => handleRemovePicture(index)}
                                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
                                 >
-                                    X
+                                    <XMarkIcon className="h-4 w-4" />
                                 </button>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Aucune photo de profil disponible.</p>
-                    )}
-
-                    {/* Ajouter des nouvelles photos */}
-                    {profilePictures.length < 10 && (
+                            )}
+                        </div>
+                    ))}
+                    {isEditing && profilePictures.length < 10 && (
                         <input
                             type="file"
                             accept="image/*"
@@ -147,7 +142,13 @@ export default function Profile() {
                 <div>
                     {!isEditing ? (
                         <>
-                            <h1 className="text-5xl font-bold text-gray-900">{user.name} {user.surname}</h1>
+                            <h1 className="text-5xl font-bold text-gray-900 flex items-center">
+                                {user.name} {user.surname}
+                                <PencilIcon
+                                    className="h-6 w-6 ml-2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                    onClick={() => setIsEditing(true)}
+                                />
+                            </h1>
                             <p className="text-lg text-gray-500 mt-2">{user.bio}</p>
                         </>
                     ) : (
