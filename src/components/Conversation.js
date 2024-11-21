@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { PencilIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
+
 
 export default function Conversation({ userId, otherUserId }) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [selectedMessage, setSelectedMessage] = useState(null);
     const messagesEndRef = useRef(null);
 
     // Charger les messages au premier chargement
@@ -120,8 +123,33 @@ export default function Conversation({ userId, otherUserId }) {
         );
     };
 
+    const handleSelectMessage = (msgId) => {
+        setSelectedMessage(msgId === selectedMessage ? null : msgId); // Permet de désélectionner
+    };
+
     return (
         <div className="max-w-2xl mx-auto mt-10">
+            {/* Menu d'options si un message est sélectionné */}
+                    {selectedMessage && (
+                        <div className="bg-gray-100 p-4 mb-4 rounded-lg shadow-md flex justify-between items-center">
+                            <p className="text-gray-700">Message sélectionné : ID {selectedMessage}</p>
+                            <div className="flex space-x-4">
+                                {/* Bouton Modifier */}
+                                <button className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                                    <PencilIcon className="h-5 w-5 mx-auto" />
+                                </button>
+                                {/* Bouton Supprimer */}
+                                <button className="flex items-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                                    <TrashIcon className="h-5 w-5 mx-auto" />
+                                </button>
+                                {/* Bouton Info */}
+                                <button className="flex items-center px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">
+                                    <InformationCircleIcon className="h-5 w-5 mx-auto" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
             <h2 className="text-2xl font-semibold mb-6">Conversation</h2>
             <div className="bg-white rounded-lg shadow-md p-4 flex flex-col space-y-4 h-96 overflow-y-auto">
                 {messages.map((msg) => (
@@ -129,18 +157,19 @@ export default function Conversation({ userId, otherUserId }) {
                         key={msg.id}
                         onMouseOver={() => handleMouseOver(msg.id)}
                         onMouseOut={() => handleMouseOut(msg.id)}
+                        onClick={() => handleSelectMessage(msg.id)} // Gérer la sélection
                         className={`relative p-3 rounded-lg max-w-xs cursor-pointer ${
                             msg.fromUserId === userId
                                 ? 'bg-blue-500 text-white self-end'
                                 : 'bg-gray-200 text-gray-800 self-start'
-                        }`}
+                        } ${msg.id === selectedMessage ? 'ring-2 ring-blue-500' : ''}`}
                     >
                         <p>{msg.content}</p>
                         <span
                             className={`absolute text-xs text-gray-500 transition-opacity duration-300 ${
                                 msg.fromUserId === userId
-                                    ? 'left-[-120px] top-1/2 transform -translate-y-1/2'
-                                    : 'right-[-120px] top-1/2 transform -translate-y-1/2'
+                                    ? 'left-[-60px] top-1/2 transform -translate-y-1/2'
+                                    : 'right-[-60px] top-1/2 transform -translate-y-1/2'
                             } ${msg.showDate ? 'opacity-100' : 'opacity-0'}`}
                         >
                             {formatMessageDate(msg.createdAt)}
