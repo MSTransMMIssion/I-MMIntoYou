@@ -62,24 +62,47 @@ app.get('/api', (req, res) => {
     res.send('API is working!');
 });
 
+app.get('/api/user', async (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'Success', data: user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 // Route pour récupérer tous les utilisateurs
 app.get('/api/users', async (req, res) => {
     try {
-        const users = await prisma.user.findMany();
-        // const users = await prisma.user.findMany({              remplacer la const users par celle ci pour pas renvoyer mdp
-        //     select: {
-        //         name: true,
-        //         surname: true,
-        //         email: true,
-        //         date_of_birth: true,
-        //         gender: true,
-        //         sexual_orientation: true,
-        //         bio: true,
-        //         location: true,
-        //         min_age_preference: true,
-        //         max_age_preference: true,
-        //     },
-        // });
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                surname: true,
+                email: true,
+                date_of_birth: true,
+                gender: true,
+                sexual_orientation: true,
+                bio: true,
+                location: true,
+                min_age_preference: true,
+                max_age_preference: true,
+            },
+        });
         res.json({ message: 'Success', data: users });
     } catch (error) {
         res.status(500).json({ error: error.message });

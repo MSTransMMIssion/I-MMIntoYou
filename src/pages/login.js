@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const router = useRouter();
 
@@ -18,46 +17,34 @@ export default function Login() {
         }
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/users');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
-                }
-                const result = await response.json();
-                setUsers(result.data);
-            } catch (error) {
-                setError(error.message);
-            }
-        };
-
-        fetchData();
-    }, []);
-
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const user = users.find(user => user.email === email);
+        try {
+            // Appel à l'API pour récupérer l'utilisateur correspondant à l'e-mail
+            const response = await fetch(`/api/user?email=${encodeURIComponent(email)}`);
+            if (!response.ok) {
+                throw new Error('Utilisateur non trouvé.');
+            }
 
-        if (user) {
+            const result = await response.json();
+            const user = result.data;
+
+            // Vérification du mot de passe
             const passwordMatch = await bcrypt.compare(password, user.password);
 
             if (passwordMatch) {
                 console.log("Connexion réussie !");
 
-                // Stocker les informations de l'utilisateur dans le localStorage
                 localStorage.setItem('loggedUser', JSON.stringify(user));
                 const authChangedEvent = new Event("authChanged");
                 window.dispatchEvent(authChangedEvent);
-
-                // Rediriger vers la page de profil
                 router.push('/profile');
             } else {
                 setError("Mot de passe incorrect.");
             }
-        } else {
-            setError("Utilisateur non trouvé.");
+        } catch (error) {
+            setError(error.message);
         }
     };
 
