@@ -1,3 +1,4 @@
+//server.js
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const app = express();
@@ -7,8 +8,6 @@ const fs = require('fs');
 const path = require('path');
 app.use(express.json());
 
-// Middleware pour parser le JSON
-app.use(express.json());
 
 // Configuration de multer pour l'upload des fichiers
 const storage = multer.diskStorage({
@@ -295,7 +294,134 @@ app.get('/api/likes/:fromUserId', async (req, res) => {
     }
 });
 
+/// Route pour envoyer un message
+app.post('/api/messages', async (req, res) => {
+    const { fromUserId, toUserId, content } = req.body;
 
+    try {
+        const message = await prisma.messages.create({
+            data: {
+                fromUserId,
+                toUserId,
+                content,
+            },
+        });
+        res.json({ message: 'Message envoyé avec succès', data: message });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de l\'envoi du message' });
+    }
+});
+
+// Route pour récupérer les messages d'une conversation
+app.get('/api/messages/:userId1/:userId2', async (req, res) => {
+    const { userId1, userId2 } = req.params;
+
+    try {
+        const messages = await prisma.messages.findMany({
+            where: {
+                OR: [
+                    { fromUserId: parseInt(userId1), toUserId: parseInt(userId2) },
+                    { fromUserId: parseInt(userId2), toUserId: parseInt(userId1) },
+                ],
+            },
+            orderBy: {
+                createdAt: 'asc',
+            },
+        });
+        res.json({ message: 'Messages récupérés avec succès', data: messages });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de la récupération des messages' });
+    }
+});
+
+
+// Route pour marquer un message comme lu
+app.put('/api/messages/:messageId/read', async (req, res) => {
+    const { messageId } = req.params;
+
+    try {
+        const message = await prisma.messages.update({
+            where: { id: parseInt(messageId) },
+            data: { is_read: true },
+        });
+        res.json({ message: 'Message marqué comme lu', data: message });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de la mise à jour du statut de lecture' });
+    }
+});
+
+app.get('/api/conversations/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const userIdInt = parseInt(userId);
+
+    if (isNaN(userIdInt)) {
+        return res.status(400).json({ error: 'userId doit être un entier valide.' });
+    }
+
+    try {
+        // Récupérer toutes les conversations où l'utilisateur est soit l'expéditeur, soit le destinataire
+        const messages = await prisma.messages.findMany({
+            where: {
+                OR: [
+                    { fromUserId: userIdInt },
+                    { toUserId: userIdInt },
+                ],
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+
+        // Filtrer pour obtenir des conversations uniques par pair d'utilisateurs
+        const conversationMap = new Map();
+
+        messages.forEach((message) => {
+            // Identifier la paire de conversation indépendamment de l'ordre
+            const key = [message.fromUserId, message.toUserId].sort().join('-');
+
+            if (!conversationMap.has(key)) {
+                const otherUserId =
+                    message.fromUserId === userIdInt ? message.toUserId : message.fromUserId;
+
+                // Ajouter une entrée dans le Map
+                conversationMap.set(key, {
+                    id: otherUserId,
+                    otherUserId,
+                    otherUserName: '', // Placeholder pour le nom que nous allons remplir ensuite
+                    lastMessage: message.content,
+                    createdAt: message.createdAt,
+                });
+            }
+        });
+
+        // Remplir les noms des autres utilisateurs dans chaque conversation
+        const conversations = await Promise.all(
+            Array.from(conversationMap.values()).map(async (conv) => {
+                if (!conv.otherUserId || isNaN(conv.otherUserId)) {
+                    console.error('ID utilisateur invalide:', conv.otherUserId);
+                    return { ...conv, otherUserName: 'Utilisateur inconnu' };
+                }
+
+                try {
+                    const user = await prisma.user.findUnique({
+                        where: { id: conv.otherUserId },
+                    });
+
+                    return {
+                        ...conv,
+                        otherUserName: user ? user.name : 'Utilisateur inconnu',
+                    };
+                } catch (err) {
+                    console.error(`Erreur lors de la récupération de l'utilisateur ${conv.otherUserId}:`, err);
+                    return { ...conv, otherUserName: 'Erreur de récupération' };
+                }
+            })
+        );
+
+        res.json({ message: 'Conversations récupérées avec succès', data: conversations });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des conversations:', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des conversations' });
+    }
+});
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

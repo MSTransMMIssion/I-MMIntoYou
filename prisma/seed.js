@@ -1,5 +1,6 @@
 const {PrismaClient} = require('@prisma/client');
 const {faker} = require('@faker-js/faker');
+const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 // Fonction pour générer une date de naissance réaliste
@@ -15,6 +16,7 @@ async function main() {
     // Générer 50 utilisateurs
     for (let i = 0; i < 50; i++) {
         const birthdate = generateBirthdate(18, 30);
+        const password = await bcrypt.hash('chef', 10);
 
         // Création d'un utilisateur
         const user = await prisma.user.create({
@@ -22,7 +24,7 @@ async function main() {
                 name: faker.person.firstName(),
                 surname: faker.person.lastName(),
                 email: faker.internet.email(),
-                password: faker.internet.password(),
+                password: password,
                 date_of_birth: birthdate,
                 gender: faker.helpers.arrayElement(['male', 'female']),
                 sexual_orientation: faker.helpers.arrayElement(['heterosexual', 'bisexual', 'homosexual']),
@@ -38,7 +40,7 @@ async function main() {
             const profilePicture = await prisma.profilePicture.create({
                 data: {
                     userId: user.id,
-                    url: `https://randomuser.me/api/portraits/men/${i+j}.jpg`,
+                    url: `https://randomuser.me/api/portraits/women/${i+j}.jpg`,
                 }
             });
         }
