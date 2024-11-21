@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 async function resetDatabase() {
     try {
         // Supprimer toutes les tables liées (ordre important pour éviter les violations de contraintes)
-        await prisma.preferences.deleteMany(); // Supprimer les préférences
         await prisma.user.deleteMany(); // Supprimer les utilisateurs
 
         console.log('Base de données réinitialisée avec succès.');

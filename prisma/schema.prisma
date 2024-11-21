@@ -20,26 +20,25 @@ model User {
   location                                  String?
   createdAt                                 DateTime?        @default(now())
   updatedAt                                 DateTime?        @default(now())
-  max_age_preference                        Int?
   min_age_preference                        Int?
-  BlockedUsers_BlockedUsers_blockedIdToUser BlockedUsers[]   @relation("BlockedUsers_blockedIdToUser")
+  max_age_preference                        Int?
   BlockedUsers_BlockedUsers_blockerIdToUser BlockedUsers[]   @relation("BlockedUsers_blockerIdToUser")
-  Likes_Likes_toUserIdToUser                Likes[]          @relation("Likes_toUserIdToUser")
+  BlockedUsers_BlockedUsers_blockedIdToUser BlockedUsers[]   @relation("BlockedUsers_blockedIdToUser")
   Likes_Likes_fromUserIdToUser              Likes[]          @relation("Likes_fromUserIdToUser")
-  Messages_Messages_toUserIdToUser          Messages[]       @relation("Messages_toUserIdToUser")
+  Likes_Likes_toUserIdToUser                Likes[]          @relation("Likes_toUserIdToUser")
   Messages_Messages_fromUserIdToUser        Messages[]       @relation("Messages_fromUserIdToUser")
-  Preferences                               Preferences[]
-  profilePictures                           ProfilePicture[]
-  Reports_Reports_reportedIdToUser          Reports[]        @relation("Reports_reportedIdToUser")
+  Messages_Messages_toUserIdToUser          Messages[]       @relation("Messages_toUserIdToUser")
   Reports_Reports_reporterIdToUser          Reports[]        @relation("Reports_reporterIdToUser")
+  Reports_Reports_reportedIdToUser          Reports[]        @relation("Reports_reportedIdToUser")
   Subscriptions                             Subscriptions[]
-  Visits_Visits_visitedIdToUser             Visits[]         @relation("Visits_visitedIdToUser")
   Visits_Visits_visitorIdToUser             Visits[]         @relation("Visits_visitorIdToUser")
+  Visits_Visits_visitedIdToUser             Visits[]         @relation("Visits_visitedIdToUser")
+  profilePictures                           ProfilePicture[] // Un utilisateur peut avoir plusieurs photos de profil
 }
 
 model ProfilePicture {
   id     Int    @id @default(autoincrement())
-  url    String
+  url    String // Lien de l'image
   userId Int
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -49,18 +48,18 @@ model BlockedUsers {
   blockerId                         Int?
   blockedId                         Int?
   createdAt                         DateTime? @default(now())
-  User_BlockedUsers_blockedIdToUser User?     @relation("BlockedUsers_blockedIdToUser", fields: [blockedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User_BlockedUsers_blockerIdToUser User?     @relation("BlockedUsers_blockerIdToUser", fields: [blockerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_BlockedUsers_blockedIdToUser User?     @relation("BlockedUsers_blockedIdToUser", fields: [blockedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Likes {
   id                          Int       @id @default(autoincrement())
-  fromUserId                  Int?
-  toUserId                    Int?
-  status                      Boolean?
+  fromUserId                  Int
+  toUserId                    Int
+  status                      Int? // 0 = non ; 1 = oui voir pour +
   createdAt                   DateTime? @default(now())
-  User_Likes_toUserIdToUser   User?     @relation("Likes_toUserIdToUser", fields: [toUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User_Likes_fromUserIdToUser User?     @relation("Likes_fromUserIdToUser", fields: [fromUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Likes_fromUserIdToUser User?     @relation("Likes_fromUserIdToUser", fields: [fromUserId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  User_Likes_toUserIdToUser   User?     @relation("Likes_toUserIdToUser", fields: [toUserId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model Messages {
@@ -70,19 +69,8 @@ model Messages {
   content                        String?
   is_read                        Boolean?  @default(false)
   createdAt                      DateTime? @default(now())
-  User_Messages_toUserIdToUser   User?     @relation("Messages_toUserIdToUser", fields: [toUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User_Messages_fromUserIdToUser User?     @relation("Messages_fromUserIdToUser", fields: [fromUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Preferences {
-  id                Int       @id @default(autoincrement())
-  userId            Int?
-  min_age           Int?
-  max_age           Int?
-  gender_preference String?
-  distance          Int?
-  createdAt         DateTime? @default(now())
-  User              User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Messages_toUserIdToUser   User?     @relation("Messages_toUserIdToUser", fields: [toUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Reports {
@@ -91,8 +79,8 @@ model Reports {
   reportedId                    Int?
   reason                        String?
   createdAt                     DateTime? @default(now())
-  User_Reports_reportedIdToUser User?     @relation("Reports_reportedIdToUser", fields: [reportedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User_Reports_reporterIdToUser User?     @relation("Reports_reporterIdToUser", fields: [reporterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Reports_reportedIdToUser User?     @relation("Reports_reportedIdToUser", fields: [reportedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Subscriptions {
@@ -110,6 +98,6 @@ model Visits {
   visitorId                   Int?
   visitedId                   Int?
   createdAt                   DateTime? @default(now())
-  User_Visits_visitedIdToUser User?     @relation("Visits_visitedIdToUser", fields: [visitedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User_Visits_visitorIdToUser User?     @relation("Visits_visitorIdToUser", fields: [visitorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User_Visits_visitedIdToUser User?     @relation("Visits_visitedIdToUser", fields: [visitedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

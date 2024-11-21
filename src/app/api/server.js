@@ -66,6 +66,20 @@ app.get('/api', (req, res) => {
 app.get('/api/users', async (req, res) => {
     try {
         const users = await prisma.user.findMany();
+        // const users = await prisma.user.findMany({              remplacer la const users par celle ci pour pas renvoyer mdp
+        //     select: {
+        //         name: true,
+        //         surname: true,
+        //         email: true,
+        //         date_of_birth: true,
+        //         gender: true,
+        //         sexual_orientation: true,
+        //         bio: true,
+        //         location: true,
+        //         min_age_preference: true,
+        //         max_age_preference: true,
+        //     },
+        // });
         res.json({ message: 'Success', data: users });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -211,6 +225,53 @@ app.delete('/api/users/:userId/profilePictures/:pictureId', async (req, res) => 
         res.status(500).json({ error: 'Erreur lors de la suppression de la photo de profil' });
     }
 });
+
+app.post('/api/likes', async (req, res) => {
+    const { fromUserId, toUserId, status } = req.body;
+
+    try {
+        const fromUserExists = await prisma.user.findUnique({ where: { id: fromUserId } });
+        const toUserExists = await prisma.user.findUnique({ where: { id: toUserId } });
+
+        if (!fromUserExists || !toUserExists) {
+            return res.status(400).json({ error: 'One or both users not found' });
+        }
+        // Créez le "Like"
+        const newLike = await prisma.likes.create({
+            data: {
+                fromUserId,
+                toUserId,
+                status,
+            },
+        });
+
+        res.status(200).json(newLike);
+    } catch (error) {
+        console.error('Error creating like:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/likes/:fromUserId', async (req, res) => {
+    const { fromUserId } = req.params;
+
+    try {
+        const likes = await prisma.likes.findMany({
+            where: {
+                fromUserId: parseInt(fromUserId),
+            },
+            select: {
+                toUserId: true,
+            },
+        });
+
+        res.status(200).json({ message: "Success", data: likes });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des likes :", error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
