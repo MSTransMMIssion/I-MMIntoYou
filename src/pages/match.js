@@ -32,6 +32,8 @@ export default function Home() {
         }
     };
 
+
+
     useEffect(() => {
         const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
 
@@ -49,12 +51,6 @@ export default function Home() {
             fetchProfilePictures(users[currentIndex].id);
         }
     }, [currentIndex, users]);
-
-    const handleNext = () => {
-        if (currentIndex < users.length - 1) {
-            setCurrentIndex(currentIndex + 1);
-        }
-    };
 
     const getOppositeGender = (gender) => {
         return gender === 'male' ? 'female' : 'male';
@@ -119,15 +115,16 @@ export default function Home() {
 
     const refused = (userId) => {
         console.log("User refused:", userId);
-        postLikes(userId, 2);
+        postLikes(userId, 0);
     };
 
     const postLikes = async (toUserId, status) => {
         const fromUserId = profile.id;
+        console.log("fromUserId:", fromUserId , "toUserId:", toUserId , "status:", status);
         const formData = {
             fromUserId,
             toUserId,
-            status, // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MODIFIER LE PRISMA CAR DANS LA DATABASE c'est du booléen et moi je met du int !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            status,
         };
 
         try {
@@ -142,8 +139,9 @@ export default function Home() {
             const result = await response.json();
             if (response.ok) {
                 console.log(result);
+                await getUsers();
             } else {
-                setError('Erreur : ' + result.error);
+                setError('Erreur un deux : ' + result.error);
             }
         } catch (error) {
             console.error("Erreur lors de l'inscription :", error);

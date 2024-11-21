@@ -66,6 +66,20 @@ app.get('/api', (req, res) => {
 app.get('/api/users', async (req, res) => {
     try {
         const users = await prisma.user.findMany();
+        // const users = await prisma.user.findMany({              remplacer la const users par celle ci pour pas renvoyer mdp
+        //     select: {
+        //         name: true,
+        //         surname: true,
+        //         email: true,
+        //         date_of_birth: true,
+        //         gender: true,
+        //         sexual_orientation: true,
+        //         bio: true,
+        //         location: true,
+        //         min_age_preference: true,
+        //         max_age_preference: true,
+        //     },
+        // });
         res.json({ message: 'Success', data: users });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -212,23 +226,33 @@ app.delete('/api/users/:userId/profilePictures/:pictureId', async (req, res) => 
     }
 });
 
+app.post('/api/likes', async (req, res) => {
+    const { fromUserId, toUserId, status } = req.body;
+
+    try {
+        const fromUserExists = await prisma.user.findUnique({ where: { id: fromUserId } });
+        const toUserExists = await prisma.user.findUnique({ where: { id: toUserId } });
+
+        if (!fromUserExists || !toUserExists) {
+            return res.status(400).json({ error: 'One or both users not found' });
+        }
+        // Créez le "Like"
+        const newLike = await prisma.likes.create({
+            data: {
+                fromUserId,
+                toUserId,
+                status,
+            },
+        });
+
+        res.status(200).json(newLike);
+    } catch (error) {
+        console.error('Error creating like:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
-});
-app.post('/api/likes', async (req, res) => {
-    const {fromUserId, toUserId, status} = req.body;
-    try {
-        const newLike = await prisma.likes.create({
-            data: {fromUserId, toUserId, status},
-        });
-        res.json({ message: 'Le like à été posé', data:newLike});
-    } catch (error){
-        if (error.code === "P2002") {  // Erreur Prisma pour doublon d'email
-            res.status(400).json({ error: "Ce Like est déjà posé." });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
-    }
 });
