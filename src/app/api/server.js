@@ -251,6 +251,28 @@ app.post('/api/likes', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+app.get('/api/likes/:fromUserId', async (req, res) => {
+    const { fromUserId } = req.params;
+
+    try {
+        const likes = await prisma.likes.findMany({
+            where: {
+                fromUserId: parseInt(fromUserId),
+            },
+            select: {
+                toUserId: true,
+            },
+        });
+
+        res.status(200).json({ message: "Success", data: likes });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des likes :", error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

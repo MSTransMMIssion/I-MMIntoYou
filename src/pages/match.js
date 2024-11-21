@@ -23,8 +23,10 @@ export default function Home() {
                 headers: { 'Content-Type': 'application/json' },
             });
             const allUsers = response.data.data;
-            const filteredUsersBySexualOrientation = profilFilter(allUsers);
-            const filteredUsers = ageFilter(filteredUsersBySexualOrientation);
+            let filteredUsers = profilFilter(allUsers);
+            filteredUsers = ageFilter(filteredUsers);
+            filteredUsers = await excludeLikedUsers(filteredUsers);
+
             setUsers(filteredUsers);
         } catch (error) {
             console.error('Error fetching users:', error.message);
@@ -32,6 +34,19 @@ export default function Home() {
         }
     };
 
+    const excludeLikedUsers = async (allUsers) => {
+        try {
+            // Récupérer les IDs des utilisateurs déjà likés par l'utilisateur connecté
+            const response = await axios.get(`/api/likes/${profile.id}`);
+            const likedUserIds = response.data.data.map(like => like.toUserId);
+
+            // Filtrer les utilisateurs qui ne sont pas dans la liste des IDs likés
+            return allUsers.filter(user => !likedUserIds.includes(user.id));
+        } catch (error) {
+            console.error("Erreur lors de l'exclusion des utilisateurs likés :", error.message);
+            return allUsers; // Retourne tous les utilisateurs si l'API échoue
+        }
+    };
 
 
     useEffect(() => {
