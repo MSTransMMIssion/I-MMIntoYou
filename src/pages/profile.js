@@ -62,9 +62,29 @@ export default function Profile() {
             return;
         }
 
-        const pictureURLs = files.map((file) => URL.createObjectURL(file));
         setNewProfilePictures([...newProfilePictures, ...files]);
-        setProfilePictures([...profilePictures, ...pictureURLs]);
+        setProfilePictures([...profilePictures, ...files]);
+    };
+
+    const handleDeletePicture = async (picture, index) => {
+        try {
+            if (!(picture instanceof File)) {
+                // Suppression côté serveur
+                await axios.delete(`/api/users/${user.id}/profilePictures/${picture.id}`);
+            }
+            // Mise à jour de l'état local
+            const updatedPictures = profilePictures.filter(
+                (p, idx) => idx !== index
+            );
+            setProfilePictures(updatedPictures);
+
+            // Supprimer des nouvelles photos si nécessaire
+            setNewProfilePictures((prev) =>
+                prev.filter((_, idx) => idx !== index)
+            );
+        } catch (error) {
+            console.error('Erreur lors de la suppression de la photo :', error);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -252,22 +272,18 @@ export default function Profile() {
                                     {profilePictures.map((picture, index) => (
                                         <div key={index} className="relative">
                                             <img
-                                                src={typeof picture === 'string' ? picture : URL.createObjectURL(picture)}
+                                                src={
+                                                    picture instanceof File
+                                                        ? URL.createObjectURL(picture)
+                                                        : picture.url
+                                                }
                                                 alt={`Profile ${index}`}
                                                 className="w-24 h-24 object-cover rounded-lg shadow-md"
                                             />
                                             <button
                                                 type="button"
                                                 className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                                                onClick={() => {
-                                                    const updatedPictures = profilePictures.filter(
-                                                        (_, idx) => idx !== index
-                                                    );
-                                                    setProfilePictures(updatedPictures);
-                                                    setNewProfilePictures(
-                                                        newProfilePictures.filter((_, idx) => idx !== index)
-                                                    );
-                                                }}
+                                                onClick={() => handleDeletePicture(picture, index)}
                                             >
                                                 ×
                                             </button>

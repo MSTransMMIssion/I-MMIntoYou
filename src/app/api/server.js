@@ -514,6 +514,19 @@ app.get('/api/conversations/unread/:userId', async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des messages non lus' });
     }
 });
+app.delete('/api/users/:userId/profilePictures/:pictureId', async (req, res) => {
+    const { userId, pictureId } = req.params;
+
+    try {
+        await prisma.profilePicture.delete({
+            where: { id: parseInt(pictureId) },
+        });
+        res.status(200).json({ message: 'Photo supprimée avec succès.' });
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la photo:', error);
+        res.status(500).json({ error: 'Erreur lors de la suppression de la photo.' });
+    }
+});
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
