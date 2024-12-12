@@ -58,11 +58,6 @@ export default function Header() {
                         <a href="/contact" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">
                             Contact
                         </a>
-                        {isAuthenticated ? (
-                            <>
-                                <a href={`/messages`} className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Messages</a>
-                            </>
-                        ): null}
                     </nav>
 
                     <div className="hidden md:flex space-x-4">

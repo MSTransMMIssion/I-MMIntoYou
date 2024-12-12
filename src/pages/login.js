@@ -12,6 +12,7 @@ export default function Login() {
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedUser');
         if (storedUser) {
+            // Si un utilisateur est trouvé dans le localStorage, rediriger vers le profil
             router.push('/profile');
         }
     }, []);
