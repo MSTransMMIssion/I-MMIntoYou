@@ -38,87 +38,75 @@ export default function Header() {
     };
 
     return (
-        <>
-            <header className="bg-white shadow-md p-4 sticky top-0 z-50">
-                <div className="container mx-auto flex justify-between items-center">
-                    {/* Logo / Nom du site */}
-                    <div className="flex items-center">
-                        <img src="/logo.png" alt="I'MMIntoYou Logo" className="h-16 w-16 mr-3" />
-                        <h1 className="text-3xl font-bold text-blue-600">I'MMIntoYou</h1>
-                    </div>
-
-                    {/* Navigation */}
-                    <nav className="hidden md:flex space-x-6">
-                        <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">
-                            Home
-                        </a>
-                        <a href="/match" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">
-                            Match
-                        </a>
-                        <a href="/contact" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">
-                            Contact
-                        </a>
-                        {isAuthenticated ? (
-                            <>
-                                <a href={`/messages`} className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Messages</a>
-                            </>
-                        ): null}
-                    </nav>
-
-                    <div className="hidden md:flex space-x-4">
-                        {isAuthenticated ? (
-                            <>
-                                <button
-                                    className={'button'}
-                                    onClick={handleLogout}
-                                >
-                                    Déconnexion
-                                </button>
-                                <button
-                                    className={'button'}
-                                    onClick={() => router.push('/profile')}
-                                >
-                                    Mon profil
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button
-                                    className={'button'}
-                                    onClick={() => router.push('/login')}
-                                >
-                                    Se connecter
-                                </button>
-                                <button
-                                    className={'button'}
-                                    onClick={() => router.push('/signup')}
-                                >
-                                    S'inscrire
-                                </button>
-                            </>
-                        )}
-                    </div>
-
-                    <div className="md:hidden">
-                        <button className="text-gray-600 focus:outline-none">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-8 w-8"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4 6h16M4 12h16m-7 6h7"
-                                />
-                            </svg>
-                        </button>
-                    </div>
+        <header className="bg-night text-baby-powder shadow-md p-4 fixed top-0 left-0 right-0 z-50">
+            <div className="container mx-auto flex justify-between items-center">
+                {/* Logo / Nom du site */}
+                <div className="flex items-center">
+                    <img src="/logo.png" alt="I'MMIntoYou Logo" className="h-12 w-12 mr-3" />
+                    <h1 className="text-2xl font-bold text-rusty-red">I'MMIntoYou</h1>
                 </div>
-            </header>
-        </>
+
+                {/* Navigation */}
+                <nav className="hidden md:flex space-x-6">
+                    <a href="/" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
+                        Home
+                    </a>
+                    <a href="/match" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
+                        Match
+                    </a>
+                    <a href="/contact" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
+                        Contact
+                    </a>
+                    {isAuthenticated && (
+                        <a href="/messages" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
+                            Messages
+                        </a>
+                    )}
+                </nav>
+
+                {/* Boutons de connexion / déconnexion */}
+                <div className="hidden md:flex space-x-4">
+                    {isAuthenticated ? (
+                        <>
+                            <button className="btn-primary" onClick={handleLogout}>
+                                Déconnexion
+                            </button>
+                            <button className="btn-secondary" onClick={() => router.push('/profile')}>
+                                Mon profil
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="btn-primary" onClick={() => router.push('/login')}>
+                                Se connecter
+                            </button>
+                            <button className="btn-secondary" onClick={() => router.push('/signup')}>
+                                S'inscrire
+                            </button>
+                        </>
+                    )}
+                </div>
+
+                {/* Menu hamburger pour mobile */}
+                <div className="md:hidden">
+                    <button className="text-baby-powder focus:outline-none">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-8 w-8"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M4 6h16M4 12h16m-7 6h7"
+                            />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
     );
 }
