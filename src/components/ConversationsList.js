@@ -12,12 +12,18 @@ export default function ConversationsList({ userId }) {
                 const response = await axios.get(`/api/conversations/${userId}`);
                 const unreadResponse = await axios.get(`/api/conversations/unread/${userId}`);
 
-                const unreadConversations = unreadResponse.data.data.map(conv => conv.fromUserId);
+                const unreadConversations = unreadResponse.data.data;
 
-                const updatedConversations = response.data.data.map((conv) => ({
-                    ...conv,
-                    hasUnreadMessages: unreadConversations.includes(conv.otherUserId),
-                }));
+                const updatedConversations = response.data.data.map((conv) => {
+                    const unreadInfo = unreadConversations.find(
+                        unread => unread.fromUserId === conv.otherUserId
+                    );
+                    return {
+                        ...conv,
+                        hasUnreadMessages: !!unreadInfo, // S'il y a des messages non lus
+                        unreadCount: unreadInfo ? unreadInfo.unreadCount : 0, // Nombre de messages non lus
+                    };
+                });
 
                 setConversations(updatedConversations);
             } catch (error) {
@@ -44,7 +50,9 @@ export default function ConversationsList({ userId }) {
                         <div className="flex-grow">
                             <h2 className="text-lg font-semibold text-gray-800">{conv.otherUserName}</h2>
                             <p className={`text-sm ${conv.hasUnreadMessages ? 'text-red-500' : 'text-gray-500'}`}>
-                                {conv.hasUnreadMessages ? '🔔 Nouveaux messages' : 'Dernier message'}
+                                {conv.hasUnreadMessages
+                                    ? `🔔 ${conv.unreadCount} nouveaux messages`
+                                    : 'Dernier message'}
                             </p>
                         </div>
                         <span className="text-sm text-gray-400">📬</span>

@@ -490,16 +490,26 @@ app.get('/api/conversations/unread/:userId', async (req, res) => {
     const { userId } = req.params;
 
     try {
-        const unreadConversations = await prisma.messages.findMany({
+        const unreadConversations = await prisma.messages.groupBy({
+            by: ['fromUserId'],
             where: {
                 toUserId: parseInt(userId),
                 is_read: false,
             },
-            distinct: ['fromUserId'],
+            _count: {
+                id: true, // Compter le nombre de messages non lus
+            },
         });
 
-        res.json({ message: 'Conversations avec messages non lus récupérées', data: unreadConversations });
+        res.json({
+            message: 'Conversations avec messages non lus récupérées',
+            data: unreadConversations.map(conv => ({
+                fromUserId: conv.fromUserId,
+                unreadCount: conv._count.id,
+            })),
+        });
     } catch (error) {
+        console.error('Erreur lors de la récupération des messages non lus:', error);
         res.status(500).json({ error: 'Erreur lors de la récupération des messages non lus' });
     }
 });
