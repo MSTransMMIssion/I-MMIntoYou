@@ -3,14 +3,13 @@ import { useRouter } from 'next/router';
 export function NonAuthenticatedView() {
     const router = useRouter();
 
-    const handleLoginRedirect = () => {
-        router.push('/login');
-    };
-
     return (
-        <div>
-            <p className="text-lilac text-lg mb-4">
-                Connectez-vous pour découvrir des profils intéressants et faire de nouvelles rencontres.
+        <div className="text-center bg-baby-powder text-night py-8 px-6 rounded-lg shadow-md max-w-xl mx-auto">
+            <p className="text-lilac text-xl font-bold mb-4">
+                Rejoignez-nous dès aujourd'hui !
+            </p>
+            <p className="text-lg mb-6">
+                Connectez-vous pour découvrir des profils inspirants et créer des liens authentiques.
             </p>
             <button
                 onClick={() => router.push('/login')}
@@ -18,7 +17,7 @@ export function NonAuthenticatedView() {
             >
                 Se connecter
             </button>
-            <div className="mt-8">
+            <div className="mt-6">
                 <p className="text-night text-md">Pas encore inscrit ?</p>
                 <button
                     onClick={() => router.push('/signup')}
