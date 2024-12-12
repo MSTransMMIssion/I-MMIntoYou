@@ -17,14 +17,15 @@ export default function Conversation({userId, otherUserId}) {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(`/api/messages/${userId}/${otherUserId}`);
-                setMessages(response.data.data.map(msg => ({ ...msg, showDate: false })));
+                setMessages(response.data.data.map(msg => ({...msg, showDate: false})));
                 scrollToBottom(); // Scroll en bas après chargement
 
                 await axios.put('/api/messages/action/markAsRead', {
                     fromUserId: otherUserId,
                     toUserId: userId,
                 });
-            } catch (error) {
+            }
+            catch (error) {
                 console.error('Erreur lors de la récupération des messages:', error);
             }
         };
@@ -113,7 +114,7 @@ export default function Conversation({userId, otherUserId}) {
     const handleMouseOver = (msgId) => {
         setMessages((prevMessages) =>
             prevMessages.map((msg) =>
-                msg.id === msgId ? { ...msg, showDate: true } : msg
+                msg.id === msgId ? {...msg, showDate: true} : msg
             )
         );
     };
@@ -121,7 +122,7 @@ export default function Conversation({userId, otherUserId}) {
     const handleMouseOut = (msgId) => {
         setMessages((prevMessages) =>
             prevMessages.map((msg) =>
-                msg.id === msgId ? { ...msg, showDate: false } : msg
+                msg.id === msgId ? {...msg, showDate: false} : msg
             )
         );
     };
@@ -160,14 +161,15 @@ export default function Conversation({userId, otherUserId}) {
         if (!editContent.trim()) return;
 
         try {
-            await axios.put(`/api/messages/${selectedMessage}`, { content: editContent });
+            await axios.put(`/api/messages/${selectedMessage}`, {content: editContent});
             setMessages((prevMessages) =>
                 prevMessages.map((msg) =>
-                    msg.id === selectedMessage ? { ...msg, content: editContent } : msg
+                    msg.id === selectedMessage ? {...msg, content: editContent} : msg
                 )
             );
             setShowEditModal(false);
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Erreur lors de la modification du message:", error);
         }
     };
@@ -205,7 +207,7 @@ export default function Conversation({userId, otherUserId}) {
                                     onClick={handleDeleteMessage}
                                     className="flex items-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
                                 >
-                                <TrashIcon className="h-5 w-5 mx-auto"/>
+                                    <TrashIcon className="h-5 w-5 mx-auto"/>
                                 </button>
                             </>
                         )}
@@ -227,12 +229,14 @@ export default function Conversation({userId, otherUserId}) {
                         key={msg.id}
                         onMouseOver={() => handleMouseOver(msg.id)}
                         onMouseOut={() => handleMouseOut(msg.id)}
-                        onClick={() => handleSelectMessage(msg.id)} // Gérer la sélection
+                        onClick={() => handleSelectMessage(msg.id)}
                         className={`relative p-3 rounded-lg max-w-xs cursor-pointer ${
                             msg.fromUserId === userId
                                 ? 'bg-blue-500 text-white self-end'
                                 : 'bg-gray-200 text-gray-800 self-start'
-                        } ${msg.id === selectedMessage ? 'ring-2 ring-blue-500 bg-opacity-60' : ''}`}
+                        } ${msg.id === selectedMessage ? 'ring-2 ring-blue-500 bg-opacity-60' : ''} ${
+                            msg.fromUserId === userId && !msg.is_read ? 'border-l-4 border-red-500' : ''
+                        }`}
                     >
                         <p>{msg.content}</p>
                         <span
@@ -264,16 +268,23 @@ export default function Conversation({userId, otherUserId}) {
                             {messages.find(msg => msg.id === selectedMessage)?.toUserId}
                         </p>
                         <p>
-                            <strong>Date:</strong>{' '}
+                        <strong>Date:</strong>{' '}
                             {formatMessageDate(
                                 messages.find(msg => msg.id === selectedMessage)?.createdAt
                             )}
+                        </p>
+                        <p>
+                            <strong>Statut:</strong>{' '}
+                            {messages.find(msg => msg.id === selectedMessage)?.fromUserId === userId &&
+                            !messages.find(msg => msg.id === selectedMessage)?.is_read
+                                ? 'Non lu par le destinataire'
+                                : 'Lu ou reçu'}
                         </p>
                         <button
                             onClick={handleCloseInfoModal}
                             className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
                         >
-                            Fermer
+                        Fermer
                         </button>
                     </div>
                 </div>

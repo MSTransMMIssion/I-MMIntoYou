@@ -335,21 +335,6 @@ app.get('/api/messages/:userId1/:userId2', async (req, res) => {
 });
 
 
-// Route pour marquer un message comme lu
-app.put('/api/messages/:messageId/read', async (req, res) => {
-    const { messageId } = req.params;
-
-    try {
-        const message = await prisma.messages.update({
-            where: { id: parseInt(messageId) },
-            data: { is_read: true },
-        });
-        res.json({ message: 'Message marqué comme lu', data: message });
-    } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la mise à jour du statut de lecture' });
-    }
-});
-
 app.delete('/api/messages/:messageId', async (req, res) => {
     const { messageId } = req.params;
 
