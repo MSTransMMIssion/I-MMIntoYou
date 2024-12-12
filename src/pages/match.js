@@ -3,14 +3,16 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import ProfileCard from "@/components/cards/ProfileCard";
 import bcrypt from "bcryptjs";
-
-export default function Home() {
+import MatchModale from "/src/components/modales/matchModale"
+export default function match() {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [profile, setProfile] = useState({});
+    const [isMatch, setIsMatch] = useState(false);
+    const [isMatchTarget, setIsMatchTarget] = useState(0);
     const [profilePictures, setProfilePictures] = useState([]);
 
     const handleLoginRedirect = () => {
@@ -33,21 +35,30 @@ export default function Home() {
             setError(error.message);
         }
     };
+    const getUserById = async (id) => {
+        try {
+            const response = await axios.get(`/api/users/${id}`, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            return response.data.data;
+
+        } catch (error) {
+            console.error('Error fetching users:', error.message);
+            setError(error.message);
+        }
+    };
 
     const excludeLikedUsers = async (allUsers) => {
         try {
-            // Récupérer les IDs des utilisateurs déjà likés par l'utilisateur connecté
             const response = await axios.get(`/api/likes/${profile.id}`);
             const likedUserIds = response.data.data.map(like => like.toUserId);
 
-            // Filtrer les utilisateurs qui ne sont pas dans la liste des IDs likés
             return allUsers.filter(user => !likedUserIds.includes(user.id));
         } catch (error) {
             console.error("Erreur lors de l'exclusion des utilisateurs likés :", error.message);
             return allUsers; // Retourne tous les utilisateurs si l'API échoue
         }
     };
-
 
     useEffect(() => {
         const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
@@ -123,9 +134,16 @@ export default function Home() {
         }
     };
 
-    const liked = (userId) => {
-        console.log("User liked:", userId);
-        postLikes(userId, 1);
+    const liked = async (userId) => {
+        try {
+            const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+            console.log("User liked:", userId, loggedUser);
+            await postLikes(userId, 1);
+            const isLiked = await getLike(loggedUser.id, userId);
+            await makeMatch(isLiked);
+        } catch (error) {
+            console.error("Erreur lors du processus de 'liked':", error);
+        }
     };
 
     const refused = (userId) => {
@@ -163,6 +181,35 @@ export default function Home() {
         }
     };
 
+    const getLike = async (fromUser, userLikedId) => {
+        try {
+            const responseLikes = await axios.get(`/api/likes/${fromUser}/${userLikedId}`, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            console.log("Has liked", responseLikes.data.data);
+            return responseLikes.data.data;
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            return [];
+        }
+    };
+
+
+    const makeMatch = async (isLiked) => {
+        if (isLiked.length >= 1) {
+            console.log("C'est un MATCH", isLiked[0].id);
+            setIsMatch(true);
+            setIsMatchTarget(await getUserById(isLiked[0].fromUserId))
+        } else {
+            console.log("NONONONO");
+        }
+    };
+
+    const handleCloseModal = () => {
+        setIsMatch(false);
+        setIsMatchTarget(null);
+    };
+
     return (
         <main className="min-h-screen bg-cover bg-center p-6 relative" style={{ backgroundImage: 'url(/homepage-background.webp)' }}>
             <div className="relative z-10 max-w-4xl mx-auto bg-white flex items-center justify-center bg-opacity-50 shadow-2xl rounded-xl p-10 text-center">
@@ -197,7 +244,7 @@ export default function Home() {
                         </button>
                     </div>
                 )}
-
+                {isMatch && <MatchModale target={isMatchTarget} onClose={handleCloseModal}/>}
                 {error && <p className="text-red-500 mt-4">{error}</p>}
             </div>
         </main>
