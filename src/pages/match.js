@@ -137,7 +137,6 @@ export default function match() {
     const liked = async (userId) => {
         try {
             const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
-            console.log("User liked:", userId, loggedUser);
             await postLikes(userId, 1);
             const isLiked = await getLike(loggedUser.id, userId);
             await makeMatch(isLiked);
@@ -147,13 +146,11 @@ export default function match() {
     };
 
     const refused = (userId) => {
-        console.log("User refused:", userId);
         postLikes(userId, 0);
     };
 
     const postLikes = async (toUserId, status) => {
         const fromUserId = profile.id;
-        console.log("fromUserId:", fromUserId , "toUserId:", toUserId , "status:", status);
         const formData = {
             fromUserId,
             toUserId,
@@ -171,7 +168,6 @@ export default function match() {
 
             const result = await response.json();
             if (response.ok) {
-                console.log(result);
                 await getUsers();
             } else {
                 setError('Erreur un deux : ' + result.error);
@@ -186,7 +182,6 @@ export default function match() {
             const responseLikes = await axios.get(`/api/likes/${fromUser}/${userLikedId}`, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            console.log("Has liked", responseLikes.data.data);
             return responseLikes.data.data;
         } catch (error) {
             console.error("Error fetching user data:", error);
@@ -197,11 +192,8 @@ export default function match() {
 
     const makeMatch = async (isLiked) => {
         if (isLiked.length >= 1) {
-            console.log("C'est un MATCH", isLiked[0].id);
             setIsMatch(true);
             setIsMatchTarget(await getUserById(isLiked[0].fromUserId))
-        } else {
-            console.log("NONONONO");
         }
     };
 

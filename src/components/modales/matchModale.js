@@ -1,19 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 
-export default function MatchModale({ target }) {
-    const router = useRouter();
-
-    useEffect(() => {
-        console.log(target);
-    }, [target]);
-
+export default function MatchModale({ target , onClose  }) {
     const handleSendMessage = () => {
         router.push(`/messages/${target.id}`);
-    };
-
-    const handleContinueSearching = () => {
-        console.log("Continuer de chercher l'amour");
     };
 
     return (
@@ -32,7 +22,7 @@ export default function MatchModale({ target }) {
                 </p>
                 <div className="flex justify-center space-x-4">
                     <button
-                        onClick={handleContinueSearching}
+                        onClick={onClose}
                         className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
                     >
                         Continuer de chercher
