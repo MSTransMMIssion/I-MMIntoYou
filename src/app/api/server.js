@@ -8,8 +8,6 @@ const fs = require('fs');
 const path = require('path');
 app.use(express.json());
 
-// Middleware pour parser le JSON
-app.use(express.json());
 
 // Configuration de multer pour l'upload des fichiers
 const storage = multer.diskStorage({
@@ -275,24 +273,6 @@ app.post('/api/likes', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-app.get('/api/likes/:fromUserId/:userLikedId', async (req, res) => {
-    const { fromUserId, userLikedId } = req.params;
-    console.log(`fromUserId: ${fromUserId}, userLikedId: ${userLikedId}`);
-    try {
-        const likes = await prisma.likes.findMany({
-            where: {
-                toUserId: parseInt(fromUserId),
-                fromUserId: parseInt(userLikedId),
-            },
-        });
-        console.log("Likes trouvés :", likes);
-        res.status(200).json({ message: "Success", data: likes });
-    } catch (error) {
-        console.error("Erreur lors de la récupération des likes :", error.message);
-        res.status(500).json({ error: error.message });
-    }
-});
-
 
 app.get('/api/likes/:fromUserId', async (req, res) => {
     const { fromUserId } = req.params;
