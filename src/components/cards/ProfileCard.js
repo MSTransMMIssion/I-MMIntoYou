@@ -3,10 +3,8 @@ import {useState} from 'react';
 import {
     ArrowLeftIcon,
     ArrowRightIcon,
-    BoltIcon,
     HeartIcon,
     PencilIcon,
-    StarIcon,
     XMarkIcon
 } from '@heroicons/react/24/solid';
 
@@ -128,18 +126,12 @@ export default function ProfileCard({
                 {/* Actions Section */}
                 {showActions && (
                     <div className="flex justify-around mt-6">
-                        {/*<button className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
-                            <StarIcon className="h-6 w-6 text-yellow-400"/>
-                        </button>*/}
-                        <button onClick={() => refused(user.id)} className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
+                        <button onClick={() => refused(user.id)} className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100" disabled={!showActions}>
                             <XMarkIcon className="h-6 w-6 text-gray-400"/>
                         </button>
-                        <button onClick={() => liked(user.id)} className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
+                        <button onClick={() => liked(user.id)} className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100" disabled={!showActions}>
                             <HeartIcon className="h-6 w-6 text-red-500"/>
                         </button>
-                        {/*<button className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100">
-                            <BoltIcon className="h-6 w-6 text-purple-500"/>
-                        </button>*/}
                     </div>
                 )}
             </div>
