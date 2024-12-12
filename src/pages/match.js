@@ -62,6 +62,8 @@ export default function Match() {
     };
 
     const profilFilter = (allUsers) => {
+        // filter out current user
+        allUsers = allUsers.filter(user => user.id !== profile.id);
         const profilGender = profile.gender;
         const profilSexualOrientation = profile.sexual_orientation;
         let genderFilter = [];
