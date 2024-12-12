@@ -350,6 +350,34 @@ app.put('/api/messages/:messageId/read', async (req, res) => {
     }
 });
 
+app.delete('/api/messages/:messageId', async (req, res) => {
+    const { messageId } = req.params;
+
+    try {
+        await prisma.messages.delete({
+            where: { id: parseInt(messageId) },
+        });
+        res.json({ message: 'Message supprimé avec succès' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de la suppression du message' });
+    }
+});
+
+app.put('/api/messages/:messageId', async (req, res) => {
+    const { messageId } = req.params;
+    const { content } = req.body;
+
+    try {
+        const message = await prisma.messages.update({
+            where: { id: parseInt(messageId) },
+            data: { content },
+        });
+        res.json({ message: 'Message mis à jour avec succès', data: message });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de la mise à jour du message' });
+    }
+});
+
 app.get('/api/conversations/:userId', async (req, res) => {
     const { userId } = req.params;
     const userIdInt = parseInt(userId);

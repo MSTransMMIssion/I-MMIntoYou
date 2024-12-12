@@ -1,24 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
-import { PencilIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
+import {InformationCircleIcon, PencilIcon, TrashIcon} from '@heroicons/react/24/solid';
 
-
-export default function Conversation({ userId, otherUserId }) {
+export default function Conversation({userId, otherUserId}) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [selectedMessage, setSelectedMessage] = useState(null);
+    const [showInfoModal, setShowInfoModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editContent, setEditContent] = useState('');
     const messagesEndRef = useRef(null);
 
-    // Charger les messages au premier chargement
     useEffect(() => {
         if (!userId || !otherUserId) return;
 
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(`/api/messages/${userId}/${otherUserId}`);
-                setMessages(response.data.data.map(msg => ({ ...msg, showDate: false })));
+                setMessages(response.data.data.map(msg => ({...msg, showDate: false})));
                 scrollToBottom(); // Scroll en bas après chargement
-            } catch (error) {
+            }
+            catch (error) {
                 console.error('Erreur lors de la récupération des messages:', error);
             }
         };
@@ -26,7 +28,6 @@ export default function Conversation({ userId, otherUserId }) {
         fetchMessages();
     }, [userId, otherUserId]);
 
-    // Fonction pour envoyer un message
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
@@ -38,24 +39,24 @@ export default function Conversation({ userId, otherUserId }) {
             });
 
             setNewMessage('');
-            fetchMessages(); // Recharger les messages après envoi
-        } catch (error) {
+            fetchMessages();
+        }
+        catch (error) {
             console.error("Erreur lors de l'envoi du message:", error);
         }
     };
 
-    // Fonction pour charger les messages
     const fetchMessages = async () => {
         try {
             const response = await axios.get(`/api/messages/${userId}/${otherUserId}`);
-            setMessages(response.data.data.map(msg => ({ ...msg, showDate: false })));
-            scrollToBottom(); // Scroll en bas après rechargement
-        } catch (error) {
+            setMessages(response.data.data.map(msg => ({...msg, showDate: false})));
+            scrollToBottom();
+        }
+        catch (error) {
             console.error('Erreur lors de la récupération des messages:', error);
         }
     };
 
-    // Envoyer avec "Entrée"
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -63,19 +64,17 @@ export default function Conversation({ userId, otherUserId }) {
         }
     };
 
-    // Scroll au dernier message
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+            messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
 
-    // Formater la date selon les règles
     const formatMessageDate = (dateString) => {
         const date = new Date(dateString);
         const now = new Date();
 
-        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        const options = {day: '2-digit', month: 'short', year: 'numeric'};
         const locale = 'fr-FR';
 
         const isToday =
@@ -84,7 +83,7 @@ export default function Conversation({ userId, otherUserId }) {
             date.getFullYear() === now.getFullYear();
 
         if (isToday) {
-            return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+            return date.toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit'});
         }
 
         const yesterday = new Date();
@@ -124,31 +123,98 @@ export default function Conversation({ userId, otherUserId }) {
     };
 
     const handleSelectMessage = (msgId) => {
-        setSelectedMessage(msgId === selectedMessage ? null : msgId); // Permet de désélectionner
+        setSelectedMessage(msgId === selectedMessage ? null : msgId);
+    };
+
+    const handleDeleteMessage = async () => {
+        if (confirm('Voulez-vous vraiment supprimer ce message ?')) {
+
+            if (!selectedMessage) return;
+
+            try {
+                await axios.delete(`/api/messages/${selectedMessage}`);
+                setMessages(messages.filter(msg => msg.id !== selectedMessage));
+                setSelectedMessage(null);
+            }
+            catch (error) {
+                console.error('Erreur lors de la suppression du message:', error);
+            }
+        }
+
+    };
+
+
+    const handleEditMessage = () => {
+        const messageToEdit = messages.find((msg) => msg.id === selectedMessage);
+        if (messageToEdit?.fromUserId === userId) {
+            setEditContent(messageToEdit.content);
+            setShowEditModal(true);
+        }
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editContent.trim()) return;
+
+        try {
+            await axios.put(`/api/messages/${selectedMessage}`, { content: editContent });
+            setMessages((prevMessages) =>
+                prevMessages.map((msg) =>
+                    msg.id === selectedMessage ? { ...msg, content: editContent } : msg
+                )
+            );
+            setShowEditModal(false);
+        } catch (error) {
+            console.error("Erreur lors de la modification du message:", error);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setShowEditModal(false);
+    };
+
+    const handleShowInfo = () => {
+        setShowInfoModal(true);
+    };
+
+    const handleCloseInfoModal = () => {
+        setShowInfoModal(false);
     };
 
     return (
         <div className="max-w-2xl mx-auto mt-10">
             {/* Menu d'options si un message est sélectionné */}
-                    {selectedMessage && (
-                        <div className="bg-gray-100 p-4 mb-4 rounded-lg shadow-md flex justify-between items-center">
-                            <p className="text-gray-700">Message sélectionné : ID {selectedMessage}</p>
-                            <div className="flex space-x-4">
+            {selectedMessage && (
+                <div className="bg-gray-100 p-4 mb-4 rounded-lg shadow-md flex justify-between items-center">
+                    <p className="text-gray-700">Message sélectionné : ID {selectedMessage}</p>
+                    <div className="flex space-x-4">
+                        {messages.find(msg => msg.id === selectedMessage)?.fromUserId === userId && (
+                            <>
                                 {/* Bouton Modifier */}
-                                <button className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                                    <PencilIcon className="h-5 w-5 mx-auto" />
+                                <button
+                                    onClick={handleEditMessage}
+                                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                                >
+                                    <PencilIcon className="h-5 w-5 mx-auto"/>
                                 </button>
                                 {/* Bouton Supprimer */}
-                                <button className="flex items-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
-                                    <TrashIcon className="h-5 w-5 mx-auto" />
+                                <button
+                                    onClick={handleDeleteMessage}
+                                    className="flex items-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                                >
+                                <TrashIcon className="h-5 w-5 mx-auto"/>
                                 </button>
-                                {/* Bouton Info */}
-                                <button className="flex items-center px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">
-                                    <InformationCircleIcon className="h-5 w-5 mx-auto" />
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                            </>
+                        )}
+                        {/* Bouton Info */}
+                        <button
+                            onClick={handleShowInfo}
+                            className="flex items-center px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+                        >
+                            <InformationCircleIcon className="h-5 w-5 mx-auto"/>
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <h2 className="text-2xl font-semibold mb-6">Conversation</h2>
             <div className="bg-white rounded-lg shadow-md p-4 flex flex-col space-y-4 h-96 overflow-y-auto">
@@ -162,7 +228,7 @@ export default function Conversation({ userId, otherUserId }) {
                             msg.fromUserId === userId
                                 ? 'bg-blue-500 text-white self-end'
                                 : 'bg-gray-200 text-gray-800 self-start'
-                        } ${msg.id === selectedMessage ? 'ring-2 ring-blue-500' : ''}`}
+                        } ${msg.id === selectedMessage ? 'ring-2 ring-blue-500 bg-opacity-60' : ''}`}
                     >
                         <p>{msg.content}</p>
                         <span
@@ -176,8 +242,67 @@ export default function Conversation({ userId, otherUserId }) {
                         </span>
                     </div>
                 ))}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef}/>
             </div>
+
+            {/* Modale d'informations */}
+            {showInfoModal && selectedMessage && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-80">
+                        <h3 className="text-xl font-bold mb-4">Informations du message</h3>
+                        <p><strong>ID:</strong> {selectedMessage}</p>
+                        <p>
+                            <strong>Envoyé par:</strong>{' '}
+                            {messages.find(msg => msg.id === selectedMessage)?.fromUserId}
+                        </p>
+                        <p>
+                            <strong>Envoyé à:</strong>{' '}
+                            {messages.find(msg => msg.id === selectedMessage)?.toUserId}
+                        </p>
+                        <p>
+                            <strong>Date:</strong>{' '}
+                            {formatMessageDate(
+                                messages.find(msg => msg.id === selectedMessage)?.createdAt
+                            )}
+                        </p>
+                        <button
+                            onClick={handleCloseInfoModal}
+                            className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                        >
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Modale pour la modification */}
+            {showEditModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-80">
+                        <h3 className="text-xl font-bold mb-4">Modifier le message</h3>
+                        <textarea
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                            className="w-full p-3 border rounded mb-4"
+                        />
+                        <div className="flex justify-end space-x-4">
+                            <button
+                                onClick={handleSaveEdit}
+                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                            >
+                                Sauvegarder
+                            </button>
+                            <button
+                                onClick={handleCancelEdit}
+                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="mt-4 flex items-center">
                 <textarea
                     value={newMessage}

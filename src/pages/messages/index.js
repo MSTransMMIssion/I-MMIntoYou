@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import ConversationsList from '@/components/ConversationsList';
-
+import { useRouter } from 'next/router';
 export default function MessagesPage() {
+    const router = useRouter();
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -9,6 +10,8 @@ export default function MessagesPage() {
         if (storedUser) {
             const userData = JSON.parse(storedUser);
             setUserId(userData.id);
+        } else {
+            router.push('/login');
         }
     }, []);
 
