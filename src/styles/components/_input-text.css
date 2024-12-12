@@ -1,7 +1,20 @@
-input[type="text"], input[type="password"], input[type="email"], input[type="date"], select{
-    border: var(--foreground) 2px solid;
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+select {
+    border: 2px solid var(--foreground);
     background-color: var(--background);
-    border-radius: 5px;
+    border-radius: 8px;
     padding: 10px;
-    color: black;
+    font-size: 1rem;
+    width: 100%;
+    color: var(--night);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+    border-color: var(--true-blue);
+    box-shadow: 0 0 0 3px rgba(71, 108, 155, 0.4);
+    outline: none;
 }
