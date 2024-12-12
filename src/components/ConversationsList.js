@@ -10,7 +10,16 @@ export default function ConversationsList({ userId }) {
         const fetchConversations = async () => {
             try {
                 const response = await axios.get(`/api/conversations/${userId}`);
-                setConversations(response.data.data);
+                const unreadResponse = await axios.get(`/api/conversations/unread/${userId}`);
+
+                const unreadConversations = unreadResponse.data.data.map(conv => conv.fromUserId);
+
+                const updatedConversations = response.data.data.map((conv) => ({
+                    ...conv,
+                    hasUnreadMessages: unreadConversations.includes(conv.otherUserId),
+                }));
+
+                setConversations(updatedConversations);
             } catch (error) {
                 console.error('Erreur lors de la récupération des conversations:', error);
             }
@@ -34,7 +43,9 @@ export default function ConversationsList({ userId }) {
                     >
                         <div className="flex-grow">
                             <h2 className="text-lg font-semibold text-gray-800">{conv.otherUserName}</h2>
-                            <p className="text-sm text-gray-500">Dernier message</p>
+                            <p className={`text-sm ${conv.hasUnreadMessages ? 'text-red-500' : 'text-gray-500'}`}>
+                                {conv.hasUnreadMessages ? '🔔 Nouveaux messages' : 'Dernier message'}
+                            </p>
                         </div>
                         <span className="text-sm text-gray-400">📬</span>
                     </div>

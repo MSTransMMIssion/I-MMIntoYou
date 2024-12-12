@@ -17,10 +17,14 @@ export default function Conversation({userId, otherUserId}) {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(`/api/messages/${userId}/${otherUserId}`);
-                setMessages(response.data.data.map(msg => ({...msg, showDate: false})));
+                setMessages(response.data.data.map(msg => ({ ...msg, showDate: false })));
                 scrollToBottom(); // Scroll en bas après chargement
-            }
-            catch (error) {
+
+                await axios.put('/api/messages/action/markAsRead', {
+                    fromUserId: otherUserId,
+                    toUserId: userId,
+                });
+            } catch (error) {
                 console.error('Erreur lors de la récupération des messages:', error);
             }
         };
@@ -234,8 +238,8 @@ export default function Conversation({userId, otherUserId}) {
                         <span
                             className={`absolute text-xs text-gray-500 transition-opacity duration-300 ${
                                 msg.fromUserId === userId
-                                    ? 'left-[-60px] top-1/2 transform -translate-y-1/2'
-                                    : 'right-[-60px] top-1/2 transform -translate-y-1/2'
+                                    ? 'left-[-70px] top-1/2 transform -translate-y-1/2'
+                                    : 'right-[-70px] top-1/2 transform -translate-y-1/2'
                             } ${msg.showDate ? 'opacity-100' : 'opacity-0'}`}
                         >
                             {formatMessageDate(msg.createdAt)}

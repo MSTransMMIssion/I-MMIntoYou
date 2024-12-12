@@ -450,6 +450,59 @@ app.get('/api/conversations/:userId', async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des conversations' });
     }
 });
+
+app.put('/api/messages/action/markAsRead', async (req, res) => {
+    const { fromUserId, toUserId } = req.body;
+
+    if (!fromUserId || !toUserId) {
+        return res.status(400).json({ error: 'fromUserId et toUserId sont requis.' });
+    }
+
+    try {
+        const matchingMessages = await prisma.messages.findMany({
+            where: {
+                toUserId: parseInt(toUserId),
+                fromUserId: parseInt(fromUserId),
+                is_read: false,
+            },
+        });
+
+        if (matchingMessages.length === 0) {
+            return res.json({ message: 'Aucun message à mettre à jour.' });
+        }
+
+        const updatedMessages = await prisma.messages.updateMany({
+            where: {
+                toUserId: parseInt(toUserId),
+                fromUserId: parseInt(fromUserId),
+                is_read: false,
+            },
+            data: { is_read: true },
+        });
+
+        res.json({ message: 'Messages marqués comme lus', data: updatedMessages });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des messages :', error);
+        res.status(500).json({ error: 'Erreur lors de la mise à jour des messages' });
+    }
+});
+app.get('/api/conversations/unread/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const unreadConversations = await prisma.messages.findMany({
+            where: {
+                toUserId: parseInt(userId),
+                is_read: false,
+            },
+            distinct: ['fromUserId'],
+        });
+
+        res.json({ message: 'Conversations avec messages non lus récupérées', data: unreadConversations });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de la récupération des messages non lus' });
+    }
+});
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
