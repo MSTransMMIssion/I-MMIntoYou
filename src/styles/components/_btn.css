@@ -1,0 +1,95 @@
+/* Variables de couleurs */
+:root {
+    --rusty-red: #d9344aff;
+    --night: #151515ff;
+    --baby-powder: #fdfffcff;
+    --lilac: #be97c6ff;
+    --true-blue: #476c9bff;
+}
+
+/* Style général pour les boutons */
+button {
+    display: inline-block;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.5rem; /* Coins arrondis */
+    padding: 0.75rem 1.5rem; /* Espace interne */
+    transition: all 0.3s ease; /* Transition fluide */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre douce */
+}
+
+/* Bouton principal */
+.btn-primary {
+    background-color: var(--rusty-red);
+    color: var(--baby-powder);
+}
+
+.btn-primary:hover {
+    background-color: var(--true-blue);
+    color: var(--baby-powder);
+    transform: scale(1.05); /* Légère mise en avant */
+}
+
+.btn-primary:focus {
+    outline: 2px solid var(--lilac);
+    outline-offset: 2px;
+}
+
+.btn-primary:active {
+    background-color: var(--night);
+    transform: scale(0.95); /* Réduction lors du clic */
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+    background-color: var(--true-blue);
+    color: var(--baby-powder);
+}
+
+.btn-secondary:hover {
+    background-color: var(--lilac);
+    color: var(--night);
+    transform: scale(1.05);
+}
+
+.btn-secondary:focus {
+    outline: 2px solid var(--rusty-red);
+    outline-offset: 2px;
+}
+
+.btn-secondary:active {
+    background-color: var(--night);
+    color: var(--baby-powder);
+    transform: scale(0.95);
+}
+
+/* Bouton transparent (ex: lien déguisé) */
+.btn-link {
+    background: none;
+    color: var(--true-blue);
+    text-decoration: underline;
+}
+
+.btn-link:hover {
+    color: var(--lilac);
+}
+
+.btn-link:focus {
+    outline: none;
+    text-decoration: none;
+    color: var(--rusty-red);
+}
+
+/* Bouton désactivé */
+button:disabled {
+    background-color: var(--night);
+    color: var(--baby-powder);
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
