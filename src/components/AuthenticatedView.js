@@ -1,14 +1,18 @@
 import { useRouter } from 'next/router';
+
 export function AuthenticatedView() {
     const router = useRouter();
 
     return (
-        <div>
-            <p className="text-green-600 text-lg font-semibold mb-4">
-                Vous êtes connecté ! Complétez votre profil et commencez à rencontrer des gens.
+        <div className="text-center bg-baby-powder text-night py-8 px-6 rounded-lg shadow-md max-w-xl mx-auto">
+            <p className="text-rusty-red text-xl font-bold mb-4">
+                Vous êtes connecté !
+            </p>
+            <p className="text-lg mb-6">
+                Complétez votre profil et commencez à rencontrer des gens passionnés.
             </p>
             <button
-                className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105"
+                className="btn-primary"
                 onClick={() => router.push('/profile')}
             >
                 Aller à mon profil

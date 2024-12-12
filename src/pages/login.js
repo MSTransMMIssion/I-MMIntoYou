@@ -8,7 +8,6 @@ export default function Login() {
     const [error, setError] = useState(null);
     const router = useRouter();
 
-    // Vérifier si l'utilisateur est déjà connecté au chargement de la page
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedUser');
         if (storedUser) {
@@ -20,7 +19,6 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            // Appel à l'API pour récupérer l'utilisateur correspondant à l'e-mail
             const response = await fetch(`/api/user?email=${encodeURIComponent(email)}`);
             if (!response.ok) {
                 throw new Error('Utilisateur non trouvé.');
@@ -29,12 +27,9 @@ export default function Login() {
             const result = await response.json();
             const user = result.data;
 
-            // Vérification du mot de passe
             const passwordMatch = await bcrypt.compare(password, user.password);
 
             if (passwordMatch) {
-                console.log("Connexion réussie !");
-
                 localStorage.setItem('loggedUser', JSON.stringify(user));
                 const authChangedEvent = new Event("authChanged");
                 window.dispatchEvent(authChangedEvent);
@@ -48,35 +43,58 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <h1 className="text-center text-4xl m-9">Login</h1>
-            <form onSubmit={handleLogin} className="flex flex-col gap-5 items-center justify-center">
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    className="border border-gray-400 p-2 rounded w-80"
-                    required
-                />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    className="border border-gray-400 p-2 rounded w-80"
-                    required
-                />
-                <div className="flex flex-row gap-2">
-                    <button type="submit" className="border-black border-2 border-solid bg-emerald-500 rounded p-2.5 w-40">
-                        Login
+        <div className="min-h-screen flex items-center justify-center bg-night text-baby-powder px-4">
+            <div className="bg-baby-powder text-night max-w-md w-full p-8 rounded-lg shadow-lg">
+                <h1 className="text-3xl font-bold text-center text-rusty-red mb-6">Connexion</h1>
+                <form onSubmit={handleLogin} className="space-y-6">
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            Adresse email
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Votre adresse email"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                            Mot de passe
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Votre mot de passe"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    {error && <p className="text-rusty-red text-sm">{error}</p>}
+                    <div className="flex space-x-4">
+                        <button type="submit" className="btn-primary w-full">
+                            Connexion
+                        </button>
+                        <button type="reset" className="btn-secondary w-full">
+                            Réinitialiser
+                        </button>
+                    </div>
+                </form>
+                <p className="text-center text-gray-600 mt-6">
+                    Pas encore inscrit ?{' '}
+                    <button
+                        onClick={() => router.push('/signup')}
+                        className="btn-link"
+                    >
+                        Créez un compte
                     </button>
-                    <button type="reset" className="border-black border-2 border-solid bg-orange-700 rounded p-2.5 w-40">
-                        Réinitialiser
-                    </button>
-                </div>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+                </p>
+            </div>
         </div>
     );
 }

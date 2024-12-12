@@ -49,76 +49,119 @@ export default function Signup() {
                 setError('Erreur : ' + result.error);
             }
         } catch (error) {
+            setError("Une erreur s'est produite. Veuillez réessayer.");
             console.error('Erreur lors de l\'inscription :', error);
         }
     };
 
     return (
-        <div>
-            <h1 className="text-center text-4xl m-9">Créer un compte</h1>
-            {error && <p className="text-red-500 text-center">{error}</p>}
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5 items-center justify-center">
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Nom"
-                    required
-                />
-                <input
-                    type="text"
-                    value={surname}
-                    onChange={(e) => setSurname(e.target.value)}
-                    placeholder="Prénom"
-                    required
-                />
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    required
-                />
-                <div className="relative w-full max-w-md">
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Mot de passe"
-                        required
-                        className="w-full"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 px-4 py-2"
-                    >
-                        {showPassword ? "Cacher" : "Voir"}
-                    </button>
-                </div>
-                <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirmer le mot de passe"
-                    required
-                />
-                <input
-                    className="placeholder:text-neutral-600"
-                    type="date"
-                    value={date_of_birth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                    required
-                />
-                <div className="flex flex-row gap-2">
-                    <button type="submit" className="border-black border-2 border-solid bg-emerald-500 rounded p-2.5 w-40">
-                        Créer son compte
-                    </button>
-                    <button type="reset" className="border-black border-2 border-solid bg-orange-700 rounded p-2.5 w-40">
-                        Réinitialiser
-                    </button>
-                </div>
-            </form>
+        <div className="flex items-center justify-center bg-night text-baby-powder pt-32 px-4">
+            <div className="bg-baby-powder text-night max-w-lg w-full p-8 rounded-lg shadow-lg">
+                <h1 className="text-3xl font-bold text-center text-rusty-red mb-6">Créer un compte</h1>
+                {error && <p className="text-rusty-red text-center mb-4">{error}</p>}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                            Nom
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Votre nom"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="surname" className="block text-sm font-medium text-gray-700 mb-2">
+                            Prénom
+                        </label>
+                        <input
+                            type="text"
+                            id="surname"
+                            value={surname}
+                            onChange={(e) => setSurname(e.target.value)}
+                            placeholder="Votre prénom"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            Adresse email
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Votre adresse email"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    <div className="relative">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                            Mot de passe
+                        </label>
+                        <div className={'flex'}>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Votre mot de passe"
+                                className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="px-4 py-2 btn-secondary"
+                            >
+                                {showPassword ? "Cacher" : "Voir"}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                            Confirmer le mot de passe
+                        </label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Confirmez votre mot de passe"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-700 mb-2">
+                            Date de naissance
+                        </label>
+                        <input
+                            type="date"
+                            id="date_of_birth"
+                            value={date_of_birth}
+                            onChange={(e) => setDateOfBirth(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:border-true-blue focus:ring-1 focus:ring-true-blue"
+                            required
+                        />
+                    </div>
+                    <div className="flex space-x-4">
+                        <button type="submit" className="btn-primary w-full">
+                            Créer son compte
+                        </button>
+                        <button type="reset" className="btn-secondary w-full">
+                            Réinitialiser
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

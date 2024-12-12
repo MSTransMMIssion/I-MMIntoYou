@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { PencilIcon } from '@heroicons/react/24/solid';
 import ProfileCard from '@/components/cards/ProfileCard';
 
 export default function Profile() {
@@ -26,7 +25,9 @@ export default function Profile() {
             }
         };
 
-        fetchData().catch(error => console.error("Erreur lors de la récupération de l'utilisateur:", error));
+        fetchData().catch((error) =>
+            console.error("Erreur lors de la récupération de l'utilisateur:", error)
+        );
     }, [router]);
 
     const fetchProfilePictures = async (userId) => {
@@ -61,7 +62,7 @@ export default function Profile() {
             return;
         }
 
-        const pictureURLs = files.map(file => URL.createObjectURL(file));
+        const pictureURLs = files.map((file) => URL.createObjectURL(file));
         setNewProfilePictures([...newProfilePictures, ...files]);
         setProfilePictures([...profilePictures, ...pictureURLs]);
     };
@@ -104,107 +105,203 @@ export default function Profile() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
-                {/* ProfileCard Component */}
-                <ProfileCard
-                    user={user}
-                    profilePictures={profilePictures}
-                    isEditable={!isEditing}
-                    onEdit={() => setIsEditing(true)}
-                    showActions={!isEditing}
-                />
+        <div className="min-h-screen bg-gradient-to-br from-true-blue to-lilac py-12 pt-32">
+            <div className="max-w-5xl mx-auto">
+                <h1 className="text-4xl font-bold text-center text-baby-powder mb-12">
+                    Mon Profil
+                </h1>
 
-                {/* Formulaire d'édition des informations */}
-                {isEditing && (
-                    <div className="p-8">
-                        <form onSubmit={handleSubmit} className="space-y-4 text-left">
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="Nom"
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            />
-                            {errors.name && <p className="text-red-500">{errors.name}</p>}
-                            <input
-                                type="text"
-                                name="surname"
-                                value={formData.surname}
-                                onChange={handleChange}
-                                placeholder="Prénom"
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            />
-                            {errors.surname && <p className="text-red-500">{errors.surname}</p>}
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Email"
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            />
-                            {errors.email && <p className="text-red-500">{errors.email}</p>}
-                            <input
-                                type="date"
-                                name="date_of_birth"
-                                value={formData.date_of_birth}
-                                onChange={handleChange}
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            />
-                            <select
-                                name="gender"
-                                value={formData.gender}
-                                onChange={handleChange}
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            >
-                                <option value="male">Homme</option>
-                                <option value="female">Femme</option>
-                                <option value="other">Autre</option>
-                            </select>
-                            <select
-                                name="sexual_orientation"
-                                value={formData.sexual_orientation}
-                                onChange={handleChange}
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            >
-                                <option value="heterosexual">Hétérosexuel</option>
-                                <option value="gay">Homosexuel</option>
-                                <option value="bisexual">Bisexuel</option>
-                            </select>
-                            <textarea
-                                name="bio"
-                                value={formData.bio}
-                                onChange={handleChange}
-                                placeholder="Parlez-nous de vous..."
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            />
-                            <input
-                                type="text"
-                                name="location"
-                                value={formData.location}
-                                onChange={handleChange}
-                                placeholder="Localisation"
-                                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                            />
-                            <div className="flex justify-center space-x-4 mt-6">
+                <div className="bg-baby-powder rounded-lg shadow-lg p-8">
+                    {isEditing ? (
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Nom
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        className="input-text"
+                                        placeholder="Nom"
+                                        required
+                                    />
+                                    {errors.name && <p className="text-rusty-red">{errors.name}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Prénom
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="surname"
+                                        value={formData.surname}
+                                        onChange={handleChange}
+                                        className="input-text"
+                                        placeholder="Prénom"
+                                        required
+                                    />
+                                    {errors.surname && (
+                                        <p className="text-rusty-red">{errors.surname}</p>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Adresse Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="input-text"
+                                    placeholder="Email"
+                                    required
+                                />
+                                {errors.email && <p className="text-rusty-red">{errors.email}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Date de naissance
+                                </label>
+                                <input
+                                    type="date"
+                                    name="date_of_birth"
+                                    value={formData.date_of_birth}
+                                    onChange={handleChange}
+                                    className="input-text"
+                                    required
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Genre
+                                    </label>
+                                    <select
+                                        name="gender"
+                                        value={formData.gender}
+                                        onChange={handleChange}
+                                        className="input-select"
+                                    >
+                                        <option value="male">Homme</option>
+                                        <option value="female">Femme</option>
+                                        <option value="other">Autre</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Orientation sexuelle
+                                    </label>
+                                    <select
+                                        name="sexual_orientation"
+                                        value={formData.sexual_orientation}
+                                        onChange={handleChange}
+                                        className="input-select"
+                                    >
+                                        <option value="heterosexual">Hétérosexuel</option>
+                                        <option value="gay">Homosexuel</option>
+                                        <option value="bisexual">Bisexuel</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Bio
+                                </label>
+                                <textarea
+                                    name="bio"
+                                    value={formData.bio}
+                                    onChange={handleChange}
+                                    className="input-text"
+                                    placeholder="Parlez-nous de vous..."
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Localisation
+                                </label>
+                                <input
+                                    type="text"
+                                    name="location"
+                                    value={formData.location}
+                                    onChange={handleChange}
+                                    className="input-text"
+                                    placeholder="Localisation"
+                                />
+                            </div>
+                            {/* Gestion des photos de profil */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Photos de profil
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleProfilePictureChange}
+                                    className="input-file"
+                                />
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Vous pouvez ajouter jusqu'à 10 photos. Formats supportés : JPG, PNG.
+                                </p>
+                                <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 mt-4">
+                                    {profilePictures.map((picture, index) => (
+                                        <div key={index} className="relative">
+                                            <img
+                                                src={typeof picture === 'string' ? picture : URL.createObjectURL(picture)}
+                                                alt={`Profile ${index}`}
+                                                className="w-24 h-24 object-cover rounded-lg shadow-md"
+                                            />
+                                            <button
+                                                type="button"
+                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                                                onClick={() => {
+                                                    const updatedPictures = profilePictures.filter(
+                                                        (_, idx) => idx !== index
+                                                    );
+                                                    setProfilePictures(updatedPictures);
+                                                    setNewProfilePictures(
+                                                        newProfilePictures.filter((_, idx) => idx !== index)
+                                                    );
+                                                }}
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex justify-center gap-4 mt-6">
                                 <button
                                     type="submit"
-                                    className="bg-green-500 text-white font-semibold px-6 py-3 rounded-full hover:bg-green-600"
+                                    className="btn-primary"
                                 >
                                     Sauvegarder
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setIsEditing(false)}
-                                    className="bg-red-500 text-white font-semibold px-6 py-3 rounded-full hover:bg-red-600"
+                                    className="btn-secondary"
                                 >
                                     Annuler
                                 </button>
                             </div>
                         </form>
-                    </div>
-                )}
+                    ) : (
+                        <ProfileCard
+                            user={user}
+                            profilePictures={profilePictures}
+                            isEditable
+                            onEdit={() => setIsEditing(true)}
+                            showActions={false}
+                        />
+                    )}
+                </div>
             </div>
+        </div>
     );
 }

@@ -3,26 +3,25 @@ import { useRouter } from 'next/router';
 export function NonAuthenticatedView() {
     const router = useRouter();
 
-    const handleLoginRedirect = () => {
-        router.push('/login');
-    };
-
     return (
-        <div>
-            <p className="text-gray-500 text-lg mb-4">
-                Connectez-vous pour découvrir des profils intéressants et faire de nouvelles rencontres.
+        <div className="text-center bg-baby-powder text-night py-8 px-6 rounded-lg shadow-md max-w-xl mx-auto">
+            <p className="text-lilac text-xl font-bold mb-4">
+                Rejoignez-nous dès aujourd'hui !
+            </p>
+            <p className="text-lg mb-6">
+                Connectez-vous pour découvrir des profils inspirants et créer des liens authentiques.
             </p>
             <button
-                onClick={handleLoginRedirect}
-                className="bg-gradient-to-r from-blue-400 to-blue-600 text-white px-8 py-3 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-700 transition-transform transform hover:scale-105"
+                onClick={() => router.push('/login')}
+                className="btn-primary"
             >
                 Se connecter
             </button>
-            <div className="mt-8">
-                <p className="text-gray-600 text-md">Pas encore inscrit ?</p>
+            <div className="mt-6">
+                <p className="text-night text-md">Pas encore inscrit ?</p>
                 <button
                     onClick={() => router.push('/signup')}
-                    className="text-blue-600 font-semibold hover:underline mt-2"
+                    className="btn-link"
                 >
                     Créez un compte ici.
                 </button>
