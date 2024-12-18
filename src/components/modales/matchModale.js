@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 
 export default function MatchModale({ target , onClose  }) {
+    const router = useRouter();
     const handleSendMessage = () => {
         router.push(`/messages/${target.id}`);
     };

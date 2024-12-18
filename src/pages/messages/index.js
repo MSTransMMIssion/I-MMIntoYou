@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ConversationsList from '@/components/ConversationsList';
 import { useRouter } from 'next/router';
+
 export default function MessagesPage() {
     const router = useRouter();
     const [userId, setUserId] = useState(null);
@@ -15,14 +16,17 @@ export default function MessagesPage() {
         }
     }, []);
 
-    if (!userId) return <div>Chargement...</div>;
+    if (!userId) return (
+        <div className="flex items-center justify-center min-h-screen bg-night">
+            <div className="text-xl font-semibold text-baby-powder animate-pulse">Chargement...</div>
+        </div>
+    );
 
     return (
-        <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-            <div className="w-full max-w-2xl bg-white rounded-3xl shadow-lg p-6 mt-10">
-                <h1 className="text-3xl font-semibold text-center text-gray-900 mb-8">
-                    📬 Messages
-                </h1>
+        <div className="flex flex-col items-center min-h-screen bg-night text-baby-powder pt-32">
+            {/* Conversations List */}
+            <div className="w-full max-w-4xl bg-baby-powder rounded-lg shadow-lg p-6">
+                <h1 className="text-4xl font-bold text-center text-rusty-red mb-4">📬 Vos Messages</h1>
                 <ConversationsList userId={userId} />
             </div>
         </div>
