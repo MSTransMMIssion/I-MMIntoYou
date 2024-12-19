@@ -160,7 +160,9 @@ app.put('/api/users/update/:id', async (req, res) => {
                 gender: data.gender,
                 sexual_orientation: data.sexual_orientation,
                 bio: data.bio,
-                location: data.location
+                location: data.location,
+                max_age_preference: data.max_age_preference,
+                min_age_preference: data.min_age_preference,
             }
         });
         res.json({ message: 'Profil mis à jour avec succès', data: updatedUser });

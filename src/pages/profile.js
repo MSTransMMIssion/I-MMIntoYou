@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import ProfileCard from '@/components/cards/ProfileCard';
+import Slider from '@mui/material/Slider';
 
 export default function Profile() {
     const [user, setUser] = useState({});
@@ -34,7 +35,8 @@ export default function Profile() {
         try {
             const response = await axios.get(`/api/users/${userId}/profilePictures`);
             setProfilePictures(response.data.data);
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Erreur lors de la récupération des photos de profil:', error);
         }
     };
@@ -82,7 +84,8 @@ export default function Profile() {
             setNewProfilePictures((prev) =>
                 prev.filter((_, idx) => idx !== index)
             );
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Erreur lors de la suppression de la photo :', error);
         }
     };
@@ -111,16 +114,25 @@ export default function Profile() {
             setIsEditing(false);
             localStorage.setItem('loggedUser', JSON.stringify(formData));
             await fetchProfilePictures(user.id);
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Erreur lors de la mise à jour des données utilisateur:', error);
         }
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData({
             ...formData,
             [name]: value,
+        });
+    };
+
+    const handleAgePreferenceChange = (event, newValue) => {
+        setFormData({
+            ...formData,
+            min_age_preference: newValue[0],
+            max_age_preference: newValue[1],
         });
     };
 
@@ -134,8 +146,8 @@ export default function Profile() {
                 <div className="bg-baby-powder rounded-lg shadow-lg p-8">
                     {isEditing ? (
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                <div>
+                            <div className="flex w-full gap-6">
+                                <div className="w-1/2">
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                                         Nom
                                     </label>
@@ -150,7 +162,7 @@ export default function Profile() {
                                     />
                                     {errors.name && <p className="text-rusty-red">{errors.name}</p>}
                                 </div>
-                                <div>
+                                <div className="w-1/2">
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                                         Prénom
                                     </label>
@@ -168,33 +180,35 @@ export default function Profile() {
                                     )}
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Adresse Email
-                                </label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className="input-text"
-                                    placeholder="Email"
-                                    required
-                                />
-                                {errors.email && <p className="text-rusty-red">{errors.email}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Date de naissance
-                                </label>
-                                <input
-                                    type="date"
-                                    name="date_of_birth"
-                                    value={formData.date_of_birth}
-                                    onChange={handleChange}
-                                    className="input-text"
-                                    required
-                                />
+                            <div className="flex w-full gap-6">
+                                <div className="w-1/2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Adresse Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="input-text"
+                                        placeholder="Email"
+                                        required
+                                    />
+                                    {errors.email && <p className="text-rusty-red">{errors.email}</p>}
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Date de naissance
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="date_of_birth"
+                                        value={formData.date_of_birth}
+                                        onChange={handleChange}
+                                        className="input-text"
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
@@ -236,22 +250,40 @@ export default function Profile() {
                                     name="bio"
                                     value={formData.bio}
                                     onChange={handleChange}
-                                    className="input-text"
+                                    className="input-text h-48 w-full"
                                     placeholder="Parlez-nous de vous..."
                                 ></textarea>
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Localisation
-                                </label>
-                                <input
-                                    type="text"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    className="input-text"
-                                    placeholder="Localisation"
-                                />
+                            <div className="flex w-full gap-6">
+                                <div className="w-1/2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Localisation
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="location"
+                                        value={formData.location}
+                                        onChange={handleChange}
+                                        className="input-text"
+                                        placeholder="Localisation"
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Préférences d'âge
+                                    </label>
+                                    <div className="px-4 py-6">
+                                        <Slider
+                                            value={[formData.min_age_preference || 18, formData.max_age_preference || 30]}
+                                            onChange={handleAgePreferenceChange}
+                                            valueLabelDisplay="auto"
+                                            min={18}
+                                            max={30}
+                                            step={1}
+                                            sx={{color: '#d9344aff'}}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             {/* Gestion des photos de profil */}
                             <div>

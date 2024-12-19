@@ -11,7 +11,10 @@
     "reset-db": "node prisma/reset.js"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@heroicons/react": "^2.1.5",
+    "@mui/material": "^6.2.1",
     "@prisma/client": "^5.21.0",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
@@ -20,6 +23,7 @@
     "crypto-js": "^4.2.0",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
+    "mui": "^0.0.1",
     "multer": "^1.4.5-lts.1",
     "next": "14.2.15",
     "react": "^18",
