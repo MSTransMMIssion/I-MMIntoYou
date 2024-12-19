@@ -22,7 +22,7 @@ export default function Id() {
         const bytes = CryptoJS.AES.decrypt(decodeURIComponent(chaineDeCaracteres), secretKey);
         console.log(bytes.toString(CryptoJS.enc.Utf8));
         let otherUser = parseInt(bytes.toString(CryptoJS.enc.Utf8));
-        verifyOtherUserExist(otherUser)
+        if (verifyOtherUserExist(otherUser)) setOtherUserId(otherUser)
     }, []);
 
     const verifyOtherUserExist = async (otherUser) => {
@@ -33,10 +33,10 @@ export default function Id() {
             const userExists = users.find(user => user.id === otherUser);
 
             if (userExists) {
-                console.log("L'utilisateur est réel");
+                return true;
             } else {
                 console.log("L'utilisateur n'est pas réel")
-                router.push('/messages')
+                return false;
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des utilisateurs:", error);
