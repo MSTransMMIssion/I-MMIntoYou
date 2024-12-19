@@ -13,7 +13,7 @@ export function NonAuthenticatedView() {
             </p>
             <button
                 onClick={() => router.push('/login')}
-                className="btn-primary"
+                className="btn btn-primary"
             >
                 Se connecter
             </button>
@@ -21,7 +21,7 @@ export function NonAuthenticatedView() {
                 <p className="text-night text-md">Pas encore inscrit ?</p>
                 <button
                     onClick={() => router.push('/signup')}
-                    className="btn-link"
+                    className="btn btn-link"
                 >
                     Créez un compte ici.
                 </button>

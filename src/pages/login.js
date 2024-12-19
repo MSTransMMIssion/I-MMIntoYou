@@ -77,10 +77,10 @@ export default function Login() {
                     </div>
                     {error && <p className="text-rusty-red text-sm">{error}</p>}
                     <div className="flex space-x-4">
-                        <button type="submit" className="btn-primary w-full">
+                        <button type="submit" className="btn btn-primary w-full">
                             Connexion
                         </button>
-                        <button type="reset" className="btn-secondary w-full">
+                        <button type="reset" className="btn btn-secondary w-full">
                             Réinitialiser
                         </button>
                     </div>
@@ -89,7 +89,7 @@ export default function Login() {
                     Pas encore inscrit ?{' '}
                     <button
                         onClick={() => router.push('/signup')}
-                        className="btn-link"
+                        className="btn btn-link"
                     >
                         Créez un compte
                     </button>

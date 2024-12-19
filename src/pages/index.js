@@ -79,7 +79,7 @@ export default function Home() {
                     <p className="text-lg leading-relaxed mb-6">
                         Faites partie d'un réseau dynamique et bienveillant. Une fois connecté, vous aurez accès à toutes les fonctionnalités, les profils et les événements exclusifs.
                     </p>
-                    <button className="btn-secondary" onClick={() => router.push('/signup')}>
+                    <button className="btn btn-secondary" onClick={() => router.push('/signup')}>
                         Inscrivez-vous maintenant
                     </button>
                 </div>

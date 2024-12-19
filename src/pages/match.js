@@ -192,7 +192,7 @@ export default function Match() {
                         <div className="text-center">
                             <p className="text-lg mb-4">Connectez-vous pour accéder aux profils.</p>
                             <button
-                                className="btn-primary"
+                                className="btn btn-primary"
                                 onClick={handleLoginRedirect}
                             >
                                 Se connecter

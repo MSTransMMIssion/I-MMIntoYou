@@ -12,7 +12,7 @@ export function AuthenticatedView() {
                 Complétez votre profil et commencez à rencontrer des gens passionnés.
             </p>
             <button
-                className="btn-primary"
+                className="btn btn-primary"
                 onClick={() => router.push('/profile')}
             >
                 Aller à mon profil

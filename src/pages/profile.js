@@ -350,14 +350,14 @@ export default function Profile() {
                             <div className="flex justify-center gap-4 mt-6">
                                 <button
                                     type="submit"
-                                    className="btn-primary"
+                                    className="btn btn-primary"
                                 >
                                     Sauvegarder
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setIsEditing(false)}
-                                    className="btn-secondary"
+                                    className="btn btn-secondary"
                                 >
                                     Annuler
                                 </button>

@@ -119,7 +119,7 @@ export default function Signup() {
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="px-4 py-2 btn-secondary"
+                                className="px-4 py-2 btn btn-secondary"
                             >
                                 {showPassword ? "Cacher" : "Voir"}
                             </button>
@@ -153,10 +153,10 @@ export default function Signup() {
                         />
                     </div>
                     <div className="flex space-x-4">
-                        <button type="submit" className="btn-primary w-full">
+                        <button type="submit" className="btn btn-primary w-full">
                             Créer son compte
                         </button>
-                        <button type="reset" className="btn-secondary w-full">
+                        <button type="reset" className="btn btn-secondary w-full">
                             Réinitialiser
                         </button>
                     </div>
