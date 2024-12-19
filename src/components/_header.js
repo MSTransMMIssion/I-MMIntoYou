@@ -54,9 +54,6 @@ export default function Header() {
                     <a href="/match" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
                         Match
                     </a>
-                    <a href="/contact" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
-                        Contact
-                    </a>
                     {isAuthenticated && (
                         <a href="/messages" className="text-baby-powder hover:text-true-blue transition-colors duration-300">
                             Messages
