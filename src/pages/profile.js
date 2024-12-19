@@ -146,7 +146,7 @@ export default function Profile() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-true-blue to-lilac py-12 pt-32">
+        <main className="min-h-screen bg-gradient-to-br from-true-blue to-lilac py-12 pt-32">
             <div className="max-w-5xl mx-auto">
                 <h1 className="text-4xl font-bold text-center text-baby-powder mb-12">
                     Mon Profil
@@ -154,7 +154,7 @@ export default function Profile() {
 
                 <div className="rounded-lg p-8">
                     {isEditing ? (
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-6 bg-baby-powder p-6 rounded">
                             <div className="flex w-full gap-6">
                                 <div className="w-1/2">
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -374,6 +374,6 @@ export default function Profile() {
                     )}
                 </div>
             </div>
-        </div>
+        </main>
     );
 }
