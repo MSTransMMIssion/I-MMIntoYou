@@ -46,7 +46,7 @@ export default function ProfileCard({
 
     return (
         <div
-            className="w-full max-w-md md:max-w-4xl bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+            className="w-full bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row">
             <div className="relative w-full md:w-1/2 h-72 md:h-auto">
                 {/* Carousel for profile pictures */}
                 <div className="flex items-center justify-center h-full overflow-hidden relative">

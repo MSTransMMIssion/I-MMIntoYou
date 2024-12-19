@@ -170,9 +170,9 @@ export default function Match() {
 
     return (
         <main className="min-h-screen bg-gradient-to-r from-true-blue to-lilac text-baby-powder pt-32">
-            <div className="container mx-auto py-12">
+            <div className="container mx-auto py-12 flex flex-col items-center">
                 <h1 className="text-5xl font-bold text-center mb-8">Trouve ton match idéal(e)</h1>
-                <div>
+                <div className="w-full">
                     {isAuthenticated ? (
                         <>
                             {users.length > 0 ? (
