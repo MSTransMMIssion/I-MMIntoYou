@@ -13,7 +13,7 @@ export default function Home() {
     }, []);
 
     return (
-        <main className="text-baby-powder font-sans pt-20">
+        <main className="text-baby-powder font-sans pt-16 md:pt-20">
             {/* Hero Section */}
             <section
                 className="relative bg-cover bg-center h-[60vh] flex flex-col items-center justify-center text-center"

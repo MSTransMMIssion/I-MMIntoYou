@@ -64,7 +64,7 @@ export default function UserProfile() {
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-8">
                 {/* Carrousel des images */}
                 <div className="relative">
-                    {profilePictures.length > 0 ? (
+                    {profilePictures.length > 1 ? (
                         <Slider {...sliderSettings}>
                             {profilePictures.map((picture, index) => (
                                 <div key={index} className="relative h-96 flex items-center justify-center overflow-hidden">
@@ -84,6 +84,22 @@ export default function UserProfile() {
                                 </div>
                             ))}
                         </Slider>
+                    ) : profilePictures.length === 1 ? (
+                        <div className="relative h-96 flex items-center justify-center overflow-hidden">
+                            {/* Image de fond floutée */}
+                            <div
+                                className="absolute inset-0 bg-cover bg-center filter blur-md scale-125"
+                                style={{
+                                    backgroundImage: `url(${profilePictures[0].url})`,
+                                }}
+                            ></div>
+                            {/* Image principale */}
+                            <img
+                                src={profilePictures[0].url}
+                                alt="Photo unique"
+                                className="relative z-10 w-full h-full object-contain"
+                            />
+                        </div>
                     ) : (
                         <div className="h-96 flex items-center justify-center bg-gray-200 text-gray-500">
                             Aucune photo disponible
