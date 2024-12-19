@@ -23,7 +23,7 @@ export default function MessagesPage() {
     );
 
     return (
-        <div className="flex flex-col items-center min-h-screen bg-night text-baby-powder pt-32">
+        <div className="flex flex-col bg-gradient-to-br from-true-blue to-lilac items-center min-h-screen bg-night text-baby-powder pt-32">
             {/* Conversations List */}
             <div className="w-full max-w-4xl bg-baby-powder rounded-lg shadow-lg p-6">
                 <h1 className="text-4xl font-bold text-center text-rusty-red mb-4">📬 Vos Messages</h1>
