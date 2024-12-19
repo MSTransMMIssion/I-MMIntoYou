@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import CryptoJS from 'crypto-js';
 
 export default function ConversationsList({ userId }) {
     const [conversations, setConversations] = useState([]);
@@ -34,8 +35,12 @@ export default function ConversationsList({ userId }) {
         fetchConversations();
     }, [userId]);
 
+    const secretKey = 'JsuGsqplmeqalbdssdlga12gqo2b';
+
     const openConversation = (otherUserId) => {
-        router.push(`/messages/${otherUserId}`);
+        const encrypted = CryptoJS.AES.encrypt(otherUserId.toString(), secretKey).toString();
+        console.log("url qui est crypté : ",encodeURIComponent(encrypted)); // Encoder pour l'URL
+        router.push(`/messages/${encodeURIComponent(encrypted)}`);
     };
 
     return (
