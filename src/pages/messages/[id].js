@@ -9,6 +9,7 @@ import axios from "axios";
 export default function Id() {
     const [userId, setUserId] = useState(null);
     const [otherUserId, setOtherUserId] = useState(null);
+    const [realUser, setRealUser] = useState(null);
     const router = useRouter();
     useEffect(() => {
         const currentUrl = window.location.pathname;
@@ -33,6 +34,8 @@ export default function Id() {
             const userExists = users.find(user => user.id === otherUser);
 
             if (userExists) {
+                setRealUser(userExists)
+                console.log("real : ",userExists)
                 return true;
             } else {
                 console.log("L'utilisateur n'est pas réel")
@@ -47,8 +50,8 @@ export default function Id() {
          setUserId(JSON.parse(localStorage.getItem('loggedUser')).id);
     }, []);
     return (
-        <div>
-            <Conversation userId={userId} otherUserId={otherUserId} />
+        <div className="bg-gradient-to-br from-true-blue to-lilac py-16">
+            <Conversation userId={userId} otherUser={realUser} otherUserId={otherUserId} />
         </div>
     );
 }
