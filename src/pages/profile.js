@@ -152,7 +152,7 @@ export default function Profile() {
                     Mon Profil
                 </h1>
 
-                <div className="bg-baby-powder rounded-lg shadow-lg p-8">
+                <div className="rounded-lg p-8">
                     {isEditing ? (
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="flex w-full gap-6">

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { NonAuthenticatedView } from '@/components/NonAuthenticatedView';
-import { AuthenticatedView } from '@/components/AuthenticatedView';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import {NonAuthenticatedView} from '@/components/NonAuthenticatedView';
+import {AuthenticatedView} from '@/components/AuthenticatedView';
 
 export default function Home() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,10 +51,14 @@ export default function Home() {
                 <div className="max-w-5xl mx-auto px-8">
                     <h2 className="text-4xl font-bold text-rusty-red mb-6">Rencontres ciblées</h2>
                     <p className="text-lg leading-relaxed mb-4">
-                        Sur I'MMIntoYou, rencontrez des étudiants et professionnels du domaine MMI partageant vos centres d'intérêt. Échangez, partagez et créez des liens authentiques basés sur votre passion commune pour le multimédia et l'internet.
+                        Sur I'MMIntoYou, rencontrez des étudiants et professionnels du domaine MMI partageant vos
+                        centres d'intérêt. Échangez, partagez et créez des liens authentiques basés sur votre passion
+                        commune pour le multimédia et l'internet.
                     </p>
                     <p className="text-lg leading-relaxed">
-                        Que vous soyez à la recherche de collaborations, d'amitiés, ou de l'amour, cette plateforme vous permettra d'élargir votre réseau et de trouver des personnes qui comprennent vos ambitions et vos projets.
+                        Que vous soyez à la recherche de collaborations, d'amitiés, ou de l'amour, cette plateforme vous
+                        permettra d'élargir votre réseau et de trouver des personnes qui comprennent vos ambitions et
+                        vos projets.
                     </p>
                 </div>
             </section>
@@ -64,26 +68,31 @@ export default function Home() {
                 <div className="max-w-5xl mx-auto px-8">
                     <h2 className="text-4xl font-bold mb-6">Événements Exclusifs</h2>
                     <p className="text-lg leading-relaxed mb-4">
-                        Participez à des événements, ateliers et projets collaboratifs réservés à la communauté MMI. Découvrez des opportunités uniques de développer vos compétences, d'apprendre de nouveaux outils, et d'étendre votre champ d'expertise.
+                        Participez à des événements, ateliers et projets collaboratifs réservés à la communauté MMI.
+                        Découvrez des opportunités uniques de développer vos compétences, d'apprendre de nouveaux
+                        outils, et d'étendre votre champ d'expertise.
                     </p>
                     <p className="text-lg leading-relaxed">
-                        Ces rencontres vous permettront non seulement de tisser des liens forts, mais aussi de vous inspirer pour vos futurs projets.
+                        Ces rencontres vous permettront non seulement de tisser des liens forts, mais aussi de vous
+                        inspirer pour vos futurs projets.
                     </p>
                 </div>
             </section>
 
-            {/* Call to Action */}
-            <section className="bg-rusty-red text-baby-powder py-12">
-                <div className="max-w-5xl mx-auto px-8 text-center">
-                    <h2 className="text-4xl font-bold mb-6">Rejoignez la Communauté</h2>
-                    <p className="text-lg leading-relaxed mb-6">
-                        Faites partie d'un réseau dynamique et bienveillant. Une fois connecté, vous aurez accès à toutes les fonctionnalités, les profils et les événements exclusifs.
-                    </p>
-                    <button className="btn btn-secondary" onClick={() => router.push('/signup')}>
-                        Inscrivez-vous maintenant
-                    </button>
-                </div>
-            </section>
+            {isAuthenticated ? null : (
+                <section className="bg-rusty-red text-baby-powder py-12">
+                    <div className="max-w-5xl mx-auto px-8 text-center">
+                        <h2 className="text-4xl font-bold mb-6">Rejoignez la Communauté</h2>
+                        <p className="text-lg leading-relaxed mb-6">
+                            Faites partie d'un réseau dynamique et bienveillant. Une fois connecté, vous aurez accès à
+                            toutes les fonctionnalités, les profils et les événements exclusifs.
+                        </p>
+                        <button className="btn btn-secondary" onClick={() => router.push('/signup')}>
+                            Inscrivez-vous maintenant
+                        </button>
+                    </div>
+                </section>
+            )}
         </main>
     );
 }
