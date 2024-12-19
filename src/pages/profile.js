@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import ProfileCard from '@/components/cards/ProfileCard';
 import Slider from '@mui/material/Slider';
 
@@ -35,8 +35,7 @@ export default function Profile() {
         try {
             const response = await axios.get(`/api/users/${userId}/profilePictures`);
             setProfilePictures(response.data.data);
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Erreur lors de la récupération des photos de profil:', error);
         }
     };
@@ -90,6 +89,15 @@ export default function Profile() {
         }
     };
 
+    const handleSetPrimaryPicture = async (picture) => {
+        try {
+            await axios.put(`/api/users/${user.id}/profilePictures/setPrimary`, { id: picture.id });
+            await fetchProfilePictures(user.id);
+        } catch (error) {
+            console.error('Erreur lors de la définition de la photo principale :', error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -114,14 +122,15 @@ export default function Profile() {
             setIsEditing(false);
             localStorage.setItem('loggedUser', JSON.stringify(formData));
             await fetchProfilePictures(user.id);
-        }
-        catch (error) {
+
+            setNewProfilePictures([]);
+        } catch (error) {
             console.error('Erreur lors de la mise à jour des données utilisateur:', error);
         }
     };
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value,
@@ -302,7 +311,10 @@ export default function Profile() {
                                 </p>
                                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 mt-4">
                                     {profilePictures.map((picture, index) => (
-                                        <div key={index} className="relative">
+                                        <div
+                                            key={index}
+                                            className="relative group transform hover:scale-105 transition-transform duration-300"
+                                        >
                                             <img
                                                 src={
                                                     picture instanceof File
@@ -310,15 +322,27 @@ export default function Profile() {
                                                         : picture.url
                                                 }
                                                 alt={`Profile ${index}`}
-                                                className="w-24 h-24 object-cover rounded-lg shadow-md"
+                                                className="w-32 h-32 object-cover rounded-lg shadow-md transition-all duration-300"
                                             />
-                                            <button
-                                                type="button"
-                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                                                onClick={() => handleDeletePicture(picture, index)}
-                                            >
-                                                ×
-                                            </button>
+                                            <div
+                                                className="absolute top-1 right-1 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                <button
+                                                    type="button"
+                                                    title="Supprimer"
+                                                    className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm"
+                                                    onClick={() => handleDeletePicture(picture, index)}
+                                                >
+                                                    ×
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    title="Définir comme photo principale"
+                                                    className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm"
+                                                    onClick={() => handleSetPrimaryPicture(picture)}
+                                                >
+                                                    ★
+                                                </button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

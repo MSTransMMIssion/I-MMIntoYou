@@ -182,6 +182,7 @@ app.get('/api/users/:id/profilePictures', async (req, res) => {
     try {
         const pictures = await prisma.profilePicture.findMany({
             where: { userId: userId },
+            orderBy: { isPrimary: 'desc' },
         });
 
         res.json({ message: 'Photos récupérées avec succès', data: pictures });
@@ -247,6 +248,40 @@ app.delete('/api/users/:userId/profilePictures/:pictureId', async (req, res) => 
         res.json({ message: 'Photo supprimée avec succès' });
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la suppression de la photo de profil' });
+    }
+});
+
+// Route pour définir une photo principale
+app.put('/api/users/:userId/profilePictures/setPrimary', async (req, res) => {
+    const { userId } = req.params;
+    const { id: pictureId } = req.body;
+
+    try {
+        // Vérifiez si la photo existe et appartient à l'utilisateur
+        const picture = await prisma.profilePicture.findUnique({
+            where: { id: parseInt(pictureId) },
+        });
+
+        if (!picture || picture.userId !== parseInt(userId)) {
+            return res.status(404).json({ error: "Photo non trouvée ou non associée à cet utilisateur." });
+        }
+
+        // Réinitialisez le champ `isPrimary` pour toutes les photos de cet utilisateur
+        await prisma.profilePicture.updateMany({
+            where: { userId: parseInt(userId) },
+            data: { isPrimary: false },
+        });
+
+        // Définissez la nouvelle photo principale
+        const updatedPicture = await prisma.profilePicture.update({
+            where: { id: parseInt(pictureId) },
+            data: { isPrimary: true },
+        });
+
+        res.status(200).json({ message: "Photo principale mise à jour avec succès.", data: updatedPicture });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour de la photo principale :", error);
+        res.status(500).json({ error: "Erreur interne du serveur." });
     }
 });
 

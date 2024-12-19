@@ -40,6 +40,7 @@ model ProfilePicture {
   id     Int    @id @default(autoincrement())
   url    String // Lien de l'image
   userId Int
+  isPrimary Boolean @default(false)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
