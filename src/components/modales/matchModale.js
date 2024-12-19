@@ -1,10 +1,17 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import CryptoJS from "crypto-js";
 
 export default function MatchModale({ target , onClose  }) {
     const router = useRouter();
-    const handleSendMessage = () => {
-        router.push(`/messages/${target.id}`);
+
+    const secretKey = 'JsuGsqplmeqalbdssdlga12gqo2b';
+
+    const openConversation = () => {
+        console.log(target.id)
+        const encrypted = CryptoJS.AES.encrypt(target.id.toString(), secretKey).toString();
+        console.log("url qui est crypté : ",encodeURIComponent(encrypted)); // Encoder pour l'URL
+        router.push(`/messages/${encodeURIComponent(encrypted)}`);
     };
 
     return (
@@ -29,7 +36,7 @@ export default function MatchModale({ target , onClose  }) {
                         Continuer de chercher
                     </button>
                     <button
-                        onClick={handleSendMessage}
+                        onClick={openConversation}
                         className="bg-pink-400 text-white px-6 py-2 rounded-lg shadow hover:bg-pink-500 transition duration-200"
                     >
                         Envoyer un message
