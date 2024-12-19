@@ -284,6 +284,16 @@ app.put('/api/users/:userId/profilePictures/setPrimary', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur." });
     }
 });
+app.get('/api/likes', async (req, res) => {
+    try {
+        const newLike = await prisma.likes.findMany();
+        res.status(200).json(newLike);
+    } catch (error) {
+        console.error('Error creating like:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 app.post('/api/likes', async (req, res) => {
     const { fromUserId, toUserId, status } = req.body;
