@@ -123,14 +123,14 @@ export default function Header() {
 
                 {/* Photo de profil ou boutons d'authentification */}
                 <div className="relative">
-                    {isAuthenticated && profilePicture ? (
+                    {isAuthenticated ? (
                         <div
                             className="relative cursor-pointer"
                             onMouseEnter={() => setIsDropdownOpen(true)}
                             onMouseLeave={() => setIsDropdownOpen(false)}
                         >
                             <img
-                                src={profilePicture}
+                                src={profilePicture ?? "/placeholder-avatar.png"}
                                 alt="Photo de profil"
                                 className="h-12 w-12 rounded-full border-2 border-rusty-red"
                             />

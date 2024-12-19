@@ -7,13 +7,13 @@ import {
     PencilIcon,
     XMarkIcon
 } from '@heroicons/react/24/solid';
+import Link from "next/link";
 
 export default function ProfileCard({
                                         user,
                                         profilePictures,
                                         isEditable = false,
-                                        onEdit = () => {
-                                        },
+                                        onEdit = () => {},
                                         showActions = false,
                                         refused,
                                         liked,
@@ -89,9 +89,11 @@ export default function ProfileCard({
             <div className="w-full md:w-1/2 p-6 flex flex-col justify-between">
                 <div className="text-center md:text-left">
                     <div className="flex justify-center md:justify-start items-center mb-4">
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            {user.name} {user.surname}
-                        </h1>
+                        <Link href={`/user/${user.id}`}>
+                            <span className="text-3xl font-bold text-gray-900 hover:text-blue-500">
+                                {user.name} {user.surname}
+                            </span>
+                        </Link>
                         {isEditable && (
                             <PencilIcon
                                 className="h-6 w-6 ml-3 text-gray-400 cursor-pointer hover:text-gray-600"

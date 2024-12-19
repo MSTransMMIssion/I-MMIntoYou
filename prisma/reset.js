@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 async function resetDatabase() {
     try {
         // Supprimer toutes les tables liées (ordre important pour éviter les violations de contraintes)
+        await prisma.profilePicture.deleteMany(); // Supprimer les photos de profil
+        await prisma.messages.deleteMany(); // Supprimer les messages
         await prisma.user.deleteMany(); // Supprimer les utilisateurs
 
         console.log('Base de données réinitialisée avec succès.');
@@ -17,7 +19,7 @@ async function resetDatabase() {
                 surname: 'User',
                 email: 'admin@example.com',
                 password: hashedPassword, // Utilisation du mot de passe haché
-                date_of_birth: '1980-01-01',
+                date_of_birth: '2000-01-01',
                 gender: 'male',
                 sexual_orientation: 'heterosexual',
                 bio: '👨‍💻 Admin - Administrateur d\'I\'MMIntoYou\n' +
@@ -32,13 +34,15 @@ async function resetDatabase() {
                 location: 'Grenoble',
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                min_age_preference: 18,
+                max_age_preference: 30,
             },
         });
 
         const profilePicture = await prisma.profilePicture.create({
             data: {
                 userId: admin.id,
-                url: `https://randomuser.me/api/portraits/men/${admin.id}.jpg`,
+                url: `/placeholder-avatar.png`,
             }
         });
 

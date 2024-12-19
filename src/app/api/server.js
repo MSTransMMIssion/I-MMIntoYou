@@ -293,7 +293,7 @@ app.post('/api/likes', async (req, res) => {
         const toUserExists = await prisma.user.findUnique({ where: { id: toUserId } });
 
         if (!fromUserExists || !toUserExists) {
-            return res.status(400).json({ error: 'One or both users not found' });
+            return res.status(400).json({ error: 'One or both user not found' });
         }
         // Créez le "Like"
         const newLike = await prisma.likes.create({

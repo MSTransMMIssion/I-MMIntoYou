@@ -146,7 +146,7 @@ export default function Profile() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-true-blue to-lilac py-12 pt-32">
+        <main className="min-h-screen py-12 pt-32">
             <div className="max-w-5xl mx-auto">
                 <h1 className="text-4xl font-bold text-center text-baby-powder mb-12">
                     Mon Profil
