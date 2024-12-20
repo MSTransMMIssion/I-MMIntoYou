@@ -15,7 +15,7 @@ function MyApp({Component, pageProps}) {
                 <link rel="stylesheet" type="text/css"
                       href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"/>
             </Head>
-            <div className="bg-gradient-to-br from-true-blue to-lilac">
+            <div className="bg-gradient-to-br from-true-blue to-lilac min-h-[100vh]">
                 <Header/>
                 {/* Le composant de la page courante */}
                 <Component {...pageProps} />

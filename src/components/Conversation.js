@@ -222,7 +222,7 @@ export default function Conversation({userId, otherUser}) {
                 </div>
             )}
 
-            <h2 className="text-2xl font-semibold text-baby-powder mb-6">Conversation avec {otherUser?.name}</h2>
+            <h2 className="text-2xl font-semibold text-baby-powder text-center mb-6">Conversation avec {otherUser?.name}</h2>
             <div className="bg-white rounded-lg shadow-md p-4 flex flex-col space-y-4 h-96 overflow-y-auto">
                 {messages.map((msg) => (
                     <div
