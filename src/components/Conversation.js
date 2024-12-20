@@ -298,7 +298,7 @@ export default function Conversation({userId, otherUser}) {
                         <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full p-3 border rounded mb-4"
+                            className="w-full p-3 border rounded mb-4 resize-none overflow-hidden h-12"
                         />
                         <div className="flex justify-end space-x-4">
                             <button
@@ -324,7 +324,7 @@ export default function Conversation({userId, otherUser}) {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Tapez un message..."
-                    className="flex-grow p-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring focus:border-blue-300"
+                    className="flex-grow resize-none overflow-hidden h-12 p-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring focus:border-blue-300"
                     rows="2"
                 />
                 <button
