@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {InformationCircleIcon, PencilIcon, TrashIcon} from '@heroicons/react/24/solid';
 
-export default function Conversation({userId, otherUserId}) {
+export default function Conversation({userId, otherUser}) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [selectedMessage, setSelectedMessage] = useState(null);
@@ -12,16 +12,16 @@ export default function Conversation({userId, otherUserId}) {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        if (!userId || !otherUserId) return;
+        if (!userId || !otherUser) return;
 
         const fetchMessages = async () => {
             try {
-                const response = await axios.get(`/api/messages/${userId}/${otherUserId}`);
+                const response = await axios.get(`/api/messages/${userId}/${otherUser.id}`);
                 setMessages(response.data.data.map(msg => ({...msg, showDate: false})));
                 scrollToBottom(); // Scroll en bas après chargement
 
                 await axios.put('/api/messages/action/markAsRead', {
-                    fromUserId: otherUserId,
+                    fromUserId: otherUser.id,
                     toUserId: userId,
                 });
             }
@@ -31,7 +31,7 @@ export default function Conversation({userId, otherUserId}) {
         };
 
         fetchMessages();
-    }, [userId, otherUserId]);
+    }, [userId, otherUser]);
 
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
@@ -39,7 +39,7 @@ export default function Conversation({userId, otherUserId}) {
         try {
             await axios.post('/api/messages', {
                 fromUserId: userId,
-                toUserId: otherUserId,
+                toUserId: otherUser.id,
                 content: newMessage,
             });
 
@@ -53,7 +53,7 @@ export default function Conversation({userId, otherUserId}) {
 
     const fetchMessages = async () => {
         try {
-            const response = await axios.get(`/api/messages/${userId}/${otherUserId}`);
+            const response = await axios.get(`/api/messages/${userId}/${otherUser.id}`);
             setMessages(response.data.data.map(msg => ({...msg, showDate: false})));
             scrollToBottom();
         }
@@ -222,7 +222,7 @@ export default function Conversation({userId, otherUserId}) {
                 </div>
             )}
 
-            <h2 className="text-2xl font-semibold mb-6">Conversation</h2>
+            <h2 className="text-2xl font-semibold text-baby-powder mb-6">Conversation avec {otherUser?.name}</h2>
             <div className="bg-white rounded-lg shadow-md p-4 flex flex-col space-y-4 h-96 overflow-y-auto">
                 {messages.map((msg) => (
                     <div
