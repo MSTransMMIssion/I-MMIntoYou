@@ -1,9 +1,10 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import CryptoJS from 'crypto-js';
+import Image from "next/image";
 
-export default function ConversationsList({userId}) {
+export default function ConversationsList({ userId }) {
     const [mutualLikes, setMutualLikes] = useState([]);
     const router = useRouter();
 
@@ -27,7 +28,7 @@ export default function ConversationsList({userId}) {
                     )
                     .map(like => like.toUserId);
 
-                // Fetch user details for mutual likes + Last Message
+                // Fetch user details for mutual likes + Last Message + Profile Picture
                 const mutualLikeUsersWithMessages = await Promise.all(mutualLikes.map(async (id) => {
                     const userResponse = await axios.get(`/api/users/${id}`);
                     const user = userResponse.data.data;
@@ -36,9 +37,14 @@ export default function ConversationsList({userId}) {
                     const conversationResponse = await axios.get(`/api/messages/${userId}/${id}`);
                     const messages = conversationResponse.data.data;
 
+                    // Fetch primary profile picture
+                    const pictureResponse = await axios.get(`/api/users/${id}/primaryProfilePicture`);
+                    const primaryPicture = pictureResponse.data.data;
+
                     return {
                         ...user,
                         lastMessage: messages.length > 0 ? messages[messages.length - 1] : null,
+                        profilePicture: primaryPicture?.url || null,
                     };
                 }));
 
@@ -61,13 +67,31 @@ export default function ConversationsList({userId}) {
     return (
         <div className="space-y-4">
             {mutualLikes.length > 0 ? (
-                <div>
+                <div className="flex flex-col gap-4">
                     {mutualLikes.map(user => (
                         <div
                             key={user.id}
                             onClick={() => openConversation(user.id)}
-                            className="cursor-pointer p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex flex-col space-y-2"
+                            className="cursor-pointer p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center space-x-4"
                         >
+                            {/* Profile Picture */}
+                            <div className="w-12 h-12">
+                                {user.profilePicture ? (
+                                    <Image
+                                        src={user.profilePicture}
+                                        alt={`Photo de ${user.name}`}
+                                        className="w-12 h-12 rounded-full object-cover"
+                                        width={48}
+                                        height={48}
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-500">
+                                        ?
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* User Info */}
                             <div className="flex-grow">
                                 <h2 className="text-lg font-semibold text-gray-800">
                                     {user.name}

@@ -284,6 +284,35 @@ app.put('/api/users/:userId/profilePictures/setPrimary', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur." });
     }
 });
+
+app.get('/api/users/:id/primaryProfilePicture', async (req, res) => {
+    const userId = parseInt(req.params.id);
+
+    try {
+        // Chercher la photo principale
+        let primaryPicture = await prisma.profilePicture.findFirst({
+            where: { userId: userId, isPrimary: true },
+        });
+
+        // Si aucune photo principale, chercher la première photo
+        if (!primaryPicture) {
+            primaryPicture = await prisma.profilePicture.findFirst({
+                where: { userId: userId },
+                orderBy: { id: 'asc' }, // Ordre par ID pour garantir la cohérence
+            });
+        }
+
+        if (!primaryPicture) {
+            return res.status(404).json({ error: "Aucune photo de profil trouvée." });
+        }
+
+        res.json({ message: 'Photo principale ou première photo récupérée avec succès', data: primaryPicture });
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la photo principale:', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération de la photo principale' });
+    }
+});
+
 app.get('/api/likes', async (req, res) => {
     try {
         const newLike = await prisma.likes.findMany();
