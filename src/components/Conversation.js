@@ -298,18 +298,18 @@ export default function Conversation({userId, otherUser}) {
                         <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full p-3 border rounded mb-4 resize-none overflow-hidden h-12"
+                            className="w-full p-3 border rounded mb-4 resize-none overflow-hidden h-12 text-gray-700"
                         />
                         <div className="flex justify-end space-x-4">
                             <button
                                 onClick={handleSaveEdit}
-                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                                className="btn btn-primary"
                             >
                                 Sauvegarder
                             </button>
                             <button
                                 onClick={handleCancelEdit}
-                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+                                className="btn btn-secondary"
                             >
                                 Annuler
                             </button>

@@ -56,7 +56,7 @@ export default function Id() {
     return (
         <div className="bg-gradient-to-br from-true-blue to-lilac py-16 min-h-screen flex items-center justify-center">
             <div className="max-w-4xl w-full mx-auto text-baby-powder rounded-lg px-6">
-                <div onClick={handleBackClick} className="cursor-pointer bg-night rounded-3xl p-2 fixed top-20 left-1">
+                <div onClick={handleBackClick} className="cursor-pointer bg-night rounded-3xl p-2 size-8 flex justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                          stroke="currentColor" className="h-6 w-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
