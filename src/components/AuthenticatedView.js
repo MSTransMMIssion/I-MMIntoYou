@@ -15,7 +15,7 @@ export function AuthenticatedView() {
                 className="btn btn-primary"
                 onClick={() => router.push('/profile')}
             >
-                Aller à mon profil
+                Voir mon profil
             </button>
         </div>
     );

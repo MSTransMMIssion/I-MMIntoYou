@@ -1,63 +1,131 @@
-const {PrismaClient} = require('@prisma/client');
-const {faker} = require('@faker-js/faker');
+const { PrismaClient } = require('@prisma/client');
+const { faker } = require('@faker-js/faker');
 const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
-// Fonction pour générer une date de naissance réaliste
 function generateBirthdate(minAge = 18, maxAge = 50) {
     const today = new Date();
-    const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate()); // Date pour l'âge max
-    const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate()); // Date pour l'âge min
-    const randomDate = faker.date.between({from: minDate, to: maxDate});
-    return randomDate.toISOString().split('T')[0]; // Retourner la date au format AAAA-MM-DD
+    const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
+    const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+    return faker.date.between({ from: minDate, to: maxDate }).toISOString().split('T')[0];
 }
 
 async function main() {
-    // Générer 50 utilisateurs
+    const adminPassword = await bcrypt.hash('securepassword', 10);
+
+    // Création de l'utilisateur administrateur
+    const admin = await prisma.user.create({
+        data: {
+            name: 'Admin',
+            surname: 'User',
+            email: 'admin@example.com',
+            password: adminPassword,
+            date_of_birth: '2000-01-01',
+            gender: 'male',
+            sexual_orientation: 'heterosexual',
+            bio: '👨‍💻 Administrateur de la plateforme.',
+            location: 'Grenoble',
+            min_age_preference: 18,
+            max_age_preference: 30,
+        },
+    });
+
+    await prisma.profilePicture.create({
+        data: {
+            userId: admin.id,
+            url: `/placeholder-avatar.png`,
+            isPrimary: true,
+        }
+    });
+
+    // Génération de 50 utilisateurs
+    const users = [];
     for (let i = 0; i < 50; i++) {
-        const birthdate = generateBirthdate(18, 30);
         const password = await bcrypt.hash('chef', 10);
-
-        // Générer le genre
         const gender = faker.helpers.arrayElement(['male', 'female']);
-
-        // Création d'un utilisateur
         const user = await prisma.user.create({
             data: {
                 name: faker.person.firstName(),
                 surname: faker.person.lastName(),
                 email: faker.internet.email(),
                 password: password,
-                date_of_birth: birthdate,
+                date_of_birth: generateBirthdate(18, 30),
                 gender: gender,
                 sexual_orientation: faker.helpers.arrayElement(['heterosexual', 'bisexual', 'homosexual']),
-                bio: faker.lorem.sentence(),
+                bio: faker.lorem.paragraph(),
                 location: "Grenoble",
-                createdAt: new Date(),
-                updatedAt: new Date(),
                 min_age_preference: faker.number.int({ min: 18, max: 24 }),
-                max_age_preference: faker.number.int({ min: 25, max: 35 })
+                max_age_preference: faker.number.int({ min: 25, max: 35 }),
             },
         });
 
-        // Générer des photos de profil en fonction du genre
         const genderPath = gender === 'female' ? 'women' : 'men';
         for (let j = 0; j < 5; j++) {
-            const profilePicture = await prisma.profilePicture.create({
+            await prisma.profilePicture.create({
                 data: {
                     userId: user.id,
                     url: `https://randomuser.me/api/portraits/${genderPath}/${i + j}.jpg`,
-                }
+                    isPrimary: j === 0, // La première photo est définie comme principale
+                },
             });
         }
-
-        console.log(`Utilisateur ${user.name} (${gender}) créé avec succès avec des préférences.`);
+        users.push(user);
     }
+
+    // Génération de likes des utilisateurs vers l'admin
+    for (const user of users) {
+        await prisma.likes.create({
+            data: {
+                fromUserId: user.id,
+                toUserId: admin.id,
+                status: 1, // Like
+            },
+        });
+    }
+
+    // Génération de likes de l'admin vers certains utilisateurs
+    const likedByAdmin = faker.helpers.arrayElements(users, 10); // L'admin like 10 utilisateurs
+    for (const user of likedByAdmin) {
+        await prisma.likes.create({
+            data: {
+                fromUserId: admin.id,
+                toUserId: user.id,
+                status: 1, // Like
+            },
+        });
+    }
+
+    // Génération de conversations entre l'admin et les utilisateurs ayant des likes mutuels
+    for (const user of likedByAdmin) {
+        const hasReverseLike = await prisma.likes.findFirst({
+            where: {
+                fromUserId: user.id,
+                toUserId: admin.id,
+                status: 1,
+            },
+        });
+
+        if (hasReverseLike) {
+            const conversationLength = faker.number.int({ min: 3, max: 10 });
+            for (let i = 0; i < conversationLength; i++) {
+                await prisma.messages.create({
+                    data: {
+                        fromUserId: faker.helpers.arrayElement([admin.id, user.id]),
+                        toUserId: faker.helpers.arrayElement([admin.id, user.id]),
+                        content: faker.lorem.sentence(),
+                        is_read: faker.datatype.boolean(),
+                    },
+                });
+            }
+        }
+    }
+
+    console.log('Base de données peuplée avec succès avec interactions administrateur !');
 }
 
 main()
     .catch((e) => {
-        console.error(e);
+        console.error('Erreur :', e);
         process.exit(1);
     })
     .finally(async () => {
