@@ -222,7 +222,7 @@ export default function Conversation({userId, otherUser}) {
                 </div>
             )}
 
-            <h2 className="text-2xl font-semibold text-baby-powder mb-6">Conversation avec {otherUser?.name}</h2>
+            <h2 className="text-2xl font-semibold text-baby-powder text-center mb-6">Conversation avec {otherUser?.name}</h2>
             <div className="bg-white rounded-lg shadow-md p-4 flex flex-col space-y-4 h-96 overflow-y-auto">
                 {messages.map((msg) => (
                     <div
@@ -298,7 +298,7 @@ export default function Conversation({userId, otherUser}) {
                         <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full p-3 border rounded mb-4"
+                            className="w-full p-3 border rounded mb-4 resize-none overflow-hidden h-12"
                         />
                         <div className="flex justify-end space-x-4">
                             <button
@@ -324,7 +324,7 @@ export default function Conversation({userId, otherUser}) {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Tapez un message..."
-                    className="flex-grow p-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring focus:border-blue-300"
+                    className="flex-grow resize-none overflow-hidden h-12 p-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring focus:border-blue-300"
                     rows="2"
                 />
                 <button
