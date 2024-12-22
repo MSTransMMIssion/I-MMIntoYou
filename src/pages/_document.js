@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
+import React from "react";
 
 export default function Document() {
     return (
@@ -9,9 +10,10 @@ export default function Document() {
                       href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"/>
                 <link rel="stylesheet" type="text/css"
                       href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"/>
+                <link rel="icon" href="/heart.ico"/>
             </Head>
             <body>
-            <Main />
+            <Main/>
             <NextScript />
             </body>
         </Html>

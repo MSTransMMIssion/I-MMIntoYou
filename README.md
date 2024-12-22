@@ -110,6 +110,22 @@ Un compte administrateur est créé par défaut lors de l'exécution du script d
 
 ---
 
+## 🎯 Guide de démonstration
+
+Pour une exploration optimale de l'application :
+
+1. **Se connecter en tant qu'administrateur :**
+  - Connectez-vous avec les identifiants administrateur (voir section "Compte Administrateur").
+  - Explorez la section "Match" pour interagir avec des utilisateurs ayant déjà montré un intérêt.
+  - Consultez les messages existants pour observer des interactions simulées.
+
+2. **Créer un nouveau compte utilisateur :**
+  - Déconnectez-vous de l'administrateur.
+  - Inscrivez-vous avec un compte vierge pour explorer l'application comme un utilisateur classique.
+  - Testez les fonctionnalités de matching, de messagerie et de gestion de profil.
+
+---
+
 ## 📂 Arborescence du projet
 
 Voici une vue d'ensemble des principaux répertoires et fichiers :

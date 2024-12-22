@@ -9,7 +9,6 @@ function MyApp({ Component, pageProps }) {
         <>
             <Head>
                 <title>I&apos;MMIntoYou</title>
-                <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className="bg-gradient-to-br from-true-blue to-lilac">
                 <Header />
