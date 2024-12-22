@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
+import Image from "next/image";
 
 
 
@@ -22,7 +23,7 @@ export default function User_cards({user}) {
         <main className="h-120">
 
                         <div key={user.id} className="border p-4 rounded shadow-md">
-                            <img src={user.profile_picture}/>
+                            <Image src={user.profile_picture} alt="Photo de profil"/>
                             <h2 className="font-bold text-black text-lg">{user.name} {user.surname}</h2>
                             <p className="text-sm text-black">age : {calculate_age(user.date_of_birth)}</p>
                         </div>

@@ -6,7 +6,7 @@ export function NonAuthenticatedView() {
     return (
         <div className="text-center bg-baby-powder text-night py-8 px-6 rounded-lg shadow-md max-w-xl mx-auto">
             <p className="text-lilac text-xl font-bold mb-4">
-                Rejoignez-nous dès aujourd'hui !
+                Rejoignez-nous dès aujourd&apos;hui !
             </p>
             <p className="text-lg mb-6">
                 Connectez-vous pour découvrir des profils inspirants et créer des liens authentiques.

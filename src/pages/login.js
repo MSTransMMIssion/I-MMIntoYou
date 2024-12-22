@@ -11,9 +11,9 @@ export default function Login() {
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedUser');
         if (storedUser) {
-            router.push('/profile');
+            router.push('/profile').then(r => r);
         }
-    }, []);
+    }, [router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();

@@ -24,11 +24,11 @@ export default function Home() {
                 {/* Content */}
                 <div className="relative z-10 px-8">
                     <h1 className="text-5xl md:text-6xl font-bold mb-4 text-rusty-red drop-shadow-lg">
-                        I'MMIntoYou
+                        I&apos;MMIntoYou
                     </h1>
                     <p className="text-lg md:text-xl leading-relaxed mb-8">
                         Le site de rencontre exclusif pour les étudiants et passionnés du domaine MMI (Métiers du
-                        Multimédia et de l'Internet).
+                        Multimédia et de l&apos;Internet).
                     </p>
                     {isAuthenticated ? <AuthenticatedView/> : <NonAuthenticatedView/>}
                 </div>
@@ -51,13 +51,13 @@ export default function Home() {
                 <div className="max-w-5xl mx-auto px-8">
                     <h2 className="text-4xl font-bold text-rusty-red mb-6">Rencontres ciblées</h2>
                     <p className="text-lg leading-relaxed mb-4">
-                        Sur I'MMIntoYou, rencontrez des étudiants et professionnels du domaine MMI partageant vos
-                        centres d'intérêt. Échangez, partagez et créez des liens authentiques basés sur votre passion
-                        commune pour le multimédia et l'internet.
+                        Sur I&apos;MMIntoYou, rencontrez des étudiants et professionnels du domaine MMI partageant vos
+                        centres d&apos;intérêt. Échangez, partagez et créez des liens authentiques basés sur votre passion
+                        commune pour le multimédia et l&apos;internet.
                     </p>
                     <p className="text-lg leading-relaxed">
-                        Que vous soyez à la recherche de collaborations, d'amitiés, ou de l'amour, cette plateforme vous
-                        permettra d'élargir votre réseau et de trouver des personnes qui comprennent vos ambitions et
+                        Que vous soyez à la recherche de collaborations, d&apos;amitiés, ou de l&apos;amour, cette plateforme vous
+                        permettra d&apos;élargir votre réseau et de trouver des personnes qui comprennent vos ambitions et
                         vos projets.
                     </p>
                 </div>
@@ -69,8 +69,8 @@ export default function Home() {
                     <h2 className="text-4xl font-bold mb-6">Événements Exclusifs</h2>
                     <p className="text-lg leading-relaxed mb-4">
                         Participez à des événements, ateliers et projets collaboratifs réservés à la communauté MMI.
-                        Découvrez des opportunités uniques de développer vos compétences, d'apprendre de nouveaux
-                        outils, et d'étendre votre champ d'expertise.
+                        Découvrez des opportunités uniques de développer vos compétences, d&apos;apprendre de nouveaux
+                        outils, et d&apos;étendre votre champ d&apos;expertise.
                     </p>
                     <p className="text-lg leading-relaxed">
                         Ces rencontres vous permettront non seulement de tisser des liens forts, mais aussi de vous
@@ -84,7 +84,7 @@ export default function Home() {
                     <div className="max-w-5xl mx-auto px-8 text-center">
                         <h2 className="text-4xl font-bold mb-6">Rejoignez la Communauté</h2>
                         <p className="text-lg leading-relaxed mb-6">
-                            Faites partie d'un réseau dynamique et bienveillant. Une fois connecté, vous aurez accès à
+                            Faites partie d&apos;un réseau dynamique et bienveillant. Une fois connecté, vous aurez accès à
                             toutes les fonctionnalités, les profils et les événements exclusifs.
                         </p>
                         <button className="btn btn-secondary" onClick={() => router.push('/signup')}>

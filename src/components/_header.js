@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -87,37 +89,37 @@ export default function Header() {
             <div className="hidden md:flex container mx-auto justify-between items-center p-4">
                 {/* Logo / Nom du site */}
                 <div className="flex items-center">
-                    <img src="/logo.png" alt="I'MMIntoYou Logo" className="h-12 w-12 mr-3" />
-                    <h1 className="text-2xl font-bold text-rusty-red">I'MMIntoYou</h1>
+                    <Image src="/logo.png" alt="I'MMIntoYou Logo" className="h-12 w-12 mr-3" width="48" height="48"/>
+                    <h1 className="text-2xl font-bold text-rusty-red">I&apos;MMIntoYou</h1>
                 </div>
 
                 {/* Navigation */}
                 <nav className="flex space-x-6">
-                    <a
+                    <Link
                         href="/"
                         className={`text-baby-powder hover:text-true-blue transition-colors duration-300 ${
                             currentPage === "/" ? "text-rusty-red font-bold" : ""
                         }`}
                     >
                         Home
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                         href="/match"
                         className={`text-baby-powder hover:text-true-blue transition-colors duration-300 ${
                             currentPage === "/match" ? "text-rusty-red font-bold" : ""
                         }`}
                     >
                         Match
-                    </a>
+                    </Link>
                     {isAuthenticated && (
-                        <a
+                        <Link
                             href="/messages"
                             className={`text-baby-powder hover:text-true-blue transition-colors duration-300 ${
                                 currentPage === "/messages" ? "text-rusty-red font-bold" : ""
                             }`}
                         >
                             Messages
-                        </a>
+                        </Link>
                     )}
                 </nav>
 
@@ -129,10 +131,12 @@ export default function Header() {
                             onMouseEnter={() => setIsDropdownOpen(true)}
                             onMouseLeave={() => setIsDropdownOpen(false)}
                         >
-                            <img
+                            <Image
                                 src={profilePicture ?? "/placeholder-avatar.png"}
                                 alt="Photo de profil"
                                 className="h-12 w-12 rounded-full border-2 border-rusty-red"
+                                width={48}
+                                height={48}
                             />
                             {isDropdownOpen && (
                                 <div
@@ -163,7 +167,7 @@ export default function Header() {
                                 Se connecter
                             </button>
                             <button className="btn btn-secondary" onClick={() => router.push("/signup")}>
-                                S'inscrire
+                                S&apos;inscrire
                             </button>
                         </div>
                     )}
@@ -218,7 +222,7 @@ export default function Header() {
                             </svg>
                         </button>
                         <nav className="flex flex-col items-start p-6 space-y-4">
-                            <a
+                            <Link
                                 href="/"
                                 className={`text-gray-700 hover:text-true-blue transition-colors duration-300 ${
                                     currentPage === "/" ? "font-bold" : ""
@@ -226,8 +230,8 @@ export default function Header() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Home
-                            </a>
-                            <a
+                            </Link>
+                            <Link
                                 href="/match"
                                 className={`text-gray-700 hover:text-true-blue transition-colors duration-300 ${
                                     currentPage === "/match" ? "font-bold" : ""
@@ -235,10 +239,10 @@ export default function Header() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Match
-                            </a>
+                            </Link>
                             {isAuthenticated && (
                                 <>
-                                    <a
+                                    <Link
                                         href="/messages"
                                         className={`text-gray-700 hover:text-true-blue transition-colors duration-300 ${
                                             currentPage === "/messages" ? "font-bold" : ""
@@ -246,8 +250,8 @@ export default function Header() {
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Messages
-                                    </a>
-                                    <a
+                                    </Link>
+                                    <Link
                                         href="/profile"
                                         className={`text-gray-700 hover:text-true-blue transition-colors duration-300 ${
                                             currentPage === "/profile" ? "font-bold" : ""
@@ -255,7 +259,7 @@ export default function Header() {
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Profil
-                                    </a>
+                                    </Link>
                                     <button
                                         className="text-gray-700 hover:text-red-600 transition-colors duration-300"
                                         onClick={() => {
@@ -285,7 +289,7 @@ export default function Header() {
                                             setIsMobileMenuOpen(false);
                                         }}
                                     >
-                                        S'inscrire
+                                        S&apos;inscrire
                                     </button>
                                 </>
                             )}

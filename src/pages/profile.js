@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import ProfileCard from '@/components/cards/ProfileCard';
 import Slider from '@mui/material/Slider';
+import Image from "next/image";
 
 export default function Profile() {
     const [user, setUser] = useState({});
@@ -279,7 +280,7 @@ export default function Profile() {
                                 </div>
                                 <div className="w-1/2">
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                        Préférences d'âge
+                                        Préférences d&apos;âge
                                     </label>
                                     <div className="px-4 py-6">
                                         <Slider
@@ -307,7 +308,7 @@ export default function Profile() {
                                     className="input-file"
                                 />
                                 <p className="text-sm text-gray-500 mt-2">
-                                    Vous pouvez ajouter jusqu'à 10 photos. Formats supportés : JPG, PNG.
+                                    Vous pouvez ajouter jusqu&apos;à 10 photos. Formats supportés : JPG, PNG.
                                 </p>
                                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 mt-4">
                                     {profilePictures.map((picture, index) => (
@@ -315,7 +316,7 @@ export default function Profile() {
                                             key={index}
                                             className="relative group transform hover:scale-105 transition-transform duration-300"
                                         >
-                                            <img
+                                            <Image
                                                 src={
                                                     picture instanceof File
                                                         ? URL.createObjectURL(picture)
@@ -323,6 +324,8 @@ export default function Profile() {
                                                 }
                                                 alt={`Profile ${index}`}
                                                 className="w-32 h-32 object-cover rounded-lg shadow-md transition-all duration-300"
+                                                width={128}
+                                                height={128}
                                             />
                                             <div
                                                 className="absolute top-1 right-1 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

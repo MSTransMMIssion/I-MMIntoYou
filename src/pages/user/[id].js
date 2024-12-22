@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Slider from 'react-slick';
+import Image from "next/image";
 
 export default function UserProfile() {
     const router = useRouter();
@@ -76,10 +77,12 @@ export default function UserProfile() {
                                         }}
                                     ></div>
                                     {/* Image principale */}
-                                    <img
+                                    <Image
                                         src={picture.url}
                                         alt={`Photo ${index}`}
                                         className="relative z-10 w-full h-full object-contain"
+                                        width={500}
+                                        height={500}
                                     />
                                 </div>
                             ))}
@@ -94,10 +97,12 @@ export default function UserProfile() {
                                 }}
                             ></div>
                             {/* Image principale */}
-                            <img
+                            <Image
                                 src={profilePictures[0].url}
                                 alt="Photo unique"
                                 className="relative z-10 w-full h-full object-contain"
+                                width={500}
+                                height={500}
                             />
                         </div>
                     ) : (

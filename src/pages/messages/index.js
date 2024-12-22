@@ -12,9 +12,9 @@ export default function MessagesPage() {
             const userData = JSON.parse(storedUser);
             setUserId(userData.id);
         } else {
-            router.push('/login');
+            router.push('/login').then(r => r);
         }
-    }, []);
+    }, [router]);
 
     if (!userId) return (
         <div className="flex items-center justify-center min-h-screen bg-night">

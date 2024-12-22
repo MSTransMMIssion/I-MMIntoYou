@@ -8,6 +8,7 @@ import {
     XMarkIcon
 } from '@heroicons/react/24/solid';
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProfileCard({
                                         user,
@@ -51,10 +52,12 @@ export default function ProfileCard({
                 {/* Carousel for profile pictures */}
                 <div className="flex items-center justify-center h-full overflow-hidden relative">
                     {profilePictures.length > 0 ? (
-                        <img
+                        <Image
                             src={profilePictures[currentIndex].url}
                             alt={`Profile ${currentIndex}`}
                             className="w-full h-full object-cover"
+                            width={500}
+                            height={500}
                         />
                     ) : (
                         <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
